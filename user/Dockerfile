@@ -9,5 +9,5 @@ RUN ./gradlew bootJAR
 
 FROM openjdk:17-alpine
 COPY --from=builder build/libs/*.jar app.jar
-EXPOSE 8080
+EXPOSE 5000
 ENTRYPOINT ["java", "-Duser.timezone=Asia/Seoul","-jar", "/app.jar"]
