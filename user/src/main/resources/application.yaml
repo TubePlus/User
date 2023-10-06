@@ -18,7 +18,7 @@ spring:
     open-in-view: true # false ?? ??? ??
 
   datasource:
-    url: jdbc:mysql://localhost:3306/tubeplus
+    url: jdbc:mysql://34.64.88.166:3306/tubeplus
     username: root
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
