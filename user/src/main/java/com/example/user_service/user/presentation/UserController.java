@@ -8,10 +8,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/users")
 public class UserController {
     @GetMapping("/test")
     public String testUser() {
+        log.info("여기 들어옴");
         return "성공적인 test";
     }
 }
