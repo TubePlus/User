@@ -1,6 +1,6 @@
 package com.example.user_service.global.error.handler;
 
-import com.example.etc_service.global.error.ErrorCode;
+import com.example.user_service.global.error.ErrorCode;
 
 public class BusinessException extends RuntimeException{
     private static final long serialVersionUID = -7099930022202674652L;

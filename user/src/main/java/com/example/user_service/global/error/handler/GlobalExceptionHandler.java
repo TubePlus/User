@@ -1,7 +1,7 @@
 package com.example.user_service.global.error.handler;
 
-import com.example.etc_service.global.error.ErrorCode;
-import com.example.etc_service.global.error.ErrorResponse;
+import com.example.user_service.global.error.ErrorCode;
+import com.example.user_service.global.error.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.QueryTimeoutException;
 import org.springframework.http.HttpStatus;
