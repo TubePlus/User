@@ -21,7 +21,8 @@ public enum ErrorCode {
 
     /*유저*/
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "U001", "존재하지 않는 유저입니다."),
-    FIND_SELF(HttpStatus.BAD_REQUEST, "U002", "나에게는 선물할 수 없어요!"),
+//    FIND_SELF(HttpStatus.BAD_REQUEST, "U002", "나에게는 선물할 수 없어요!"),
+    DUPLICATE_USERNAME(HttpStatus.CONFLICT, "U002", "이미 존재하는 유저네임입니다."),
 
     /*포인트*/
     INVALID_POINT_GIFT_AMOUNT(HttpStatus.BAD_REQUEST, "P001", "유효하지 않은 포인트 선물 입력"),
@@ -40,7 +41,6 @@ public enum ErrorCode {
     private final HttpStatus status;
     private final String code;
     private final String message;
-
 
     ErrorCode(HttpStatus status, String code, String message) {
         this.status = status;

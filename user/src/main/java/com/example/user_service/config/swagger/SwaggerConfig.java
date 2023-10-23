@@ -20,7 +20,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi publicApi() {
 
-        String[] paths = {"/api/v1/user/**"};
+        String[] paths = {"/api/v1/users/**"};
 
         return GroupedOpenApi.builder()
                 .group("public-api")
