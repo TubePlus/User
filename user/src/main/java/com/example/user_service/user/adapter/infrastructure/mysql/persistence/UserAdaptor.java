@@ -36,8 +36,19 @@ public class UserAdaptor implements UserPort {
     public User signUpUser(User user) {
 
         UserEntity userEntity = UserEntity.userToUserEntity(user);
-        //todo: userToUserEntity 메서드 UserEntity에 정의해야할듯
         return User.userEntityToUser(userRepository.save(userEntity));
+    }
+
+    // 유저네임 변경
+    @Transactional
+    @Override
+    public User changeUsername(User user) {
+        UserEntity userEntity = UserEntity.userToUserEntity(user);
+        Optional<UserEntity> targetUser = userRepository.findByUuid(userEntity.getUuid());
+        targetUser.ifPresent(entity -> entity.updateUsername(userEntity.getUsername()));
+        return targetUser.map(User::userEntityToUser).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
     }
 
     // 유저네임 중복 체크
@@ -49,14 +60,6 @@ public class UserAdaptor implements UserPort {
             throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
         }
         return false;
-    }
-
-    // 구글 인증 아이디 중복 체크(가입 여부 조회를 위한)
-    @Override
-    public Boolean checkDuplicateGoogleAuth(String googleAuth) {
-
-//        return userRepository.existsByGoogleAuth(googleAuth);
-        return true;
     }
 
     // 유저 회원정보 조회

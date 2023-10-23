@@ -48,6 +48,13 @@ public class User {
                 .build();
     }
 
+    public static User changeUsername(String username, String uuid) {
+        return User.builder()
+                .username(username)
+                .uuid(uuid)
+                .build();
+    }
+
     public static User userEntityToUser(UserEntity userEntity) {
         return User.builder()
                 .username(userEntity.getUsername())

@@ -1,10 +1,10 @@
 package com.example.user_service.user.application.service;
 
-import com.example.user_service.user.application.ports.input.DuplicateCheckUseCase;
+import com.example.user_service.user.application.ports.input.ChangeUsernameUseCase;
 import com.example.user_service.user.application.ports.input.LogInUseCase;
 import com.example.user_service.user.application.ports.input.SignUpUseCase;
 import com.example.user_service.user.application.ports.input.UserInfoUseCase;
-import com.example.user_service.user.application.ports.output.dto.DuplicateCheckDto;
+import com.example.user_service.user.application.ports.output.dto.ChangeUsernameDto;
 import com.example.user_service.user.application.ports.output.dto.LogInDto;
 import com.example.user_service.user.application.ports.output.dto.SignUpDto;
 import com.example.user_service.user.application.ports.output.UserPort;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService implements LogInUseCase, SignUpUseCase, DuplicateCheckUseCase, UserInfoUseCase {
+public class UserService implements LogInUseCase, SignUpUseCase, ChangeUsernameUseCase, UserInfoUseCase {
 
     private final UserPort userPort;
 
@@ -46,18 +46,17 @@ public class UserService implements LogInUseCase, SignUpUseCase, DuplicateCheckU
         return SignUpDto.formSignUpDto(user); // return 값으로 사용할 Dto
     }
 
-    @Override // username 중복 체크(기존의 username을 새로운 username으로 변경 시 사용)
-    public DuplicateCheckDto checkDuplicateUsername(CheckUsernameQuery checkUsernameQuery) {
+    @Override // username 변경(기존의 username을 새로운 username으로 변경 시 사용)
+    public ChangeUsernameDto changeUsername(ChangeUsernameQuery changeUsernameQuery) {
 
-        Boolean isDuplicate = userPort.checkDuplicateUsername(checkUsernameQuery.getUsername());
-        return DuplicateCheckDto.formDuplicateCheckDto(isDuplicate); // return 값으로 사용할 Dto
-    }
+        // username 중복 체크
+        checkDuplicateUsername(changeUsernameQuery.getUsername());
 
-    @Override
-    public DuplicateCheckDto checkDuplicateGoogleAuth(CheckGoogleAuthQuery checkGoogleAuthQuery) {
-
-        Boolean isDuplicate = userPort.checkDuplicateGoogleAuth(checkGoogleAuthQuery.getGoogleAuth());
-        return DuplicateCheckDto.formDuplicateCheckDto(isDuplicate); // return 값으로 사용할 Dto
+        User user = userPort.changeUsername(User.changeUsername(
+                changeUsernameQuery.getUsername(),
+                changeUsernameQuery.getUuid()
+        ));
+        return ChangeUsernameDto.formUsernameDto(user); // return 값으로 사용할 Dto
     }
 
     @Override
@@ -75,11 +74,5 @@ public class UserService implements LogInUseCase, SignUpUseCase, DuplicateCheckU
     public Boolean checkDuplicateUsername(String username) {
 
         return userPort.checkDuplicateUsername(username);
-    }
-
-    // Google OAuth ID 중복 체크
-    public Boolean checkDuplicateGoogleAuth(String googleAuth) {
-
-        return userPort.checkDuplicateGoogleAuth(googleAuth);
     }
 }

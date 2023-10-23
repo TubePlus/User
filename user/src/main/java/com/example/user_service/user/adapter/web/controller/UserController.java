@@ -1,15 +1,16 @@
 package com.example.user_service.user.adapter.web.controller;
 
+import com.example.user_service.user.adapter.web.request.RequestChangeUsername;
 import com.example.user_service.user.adapter.web.request.RequestLogInUser;
 import com.example.user_service.user.adapter.web.request.RequestSignUpUser;
 import com.example.user_service.user.adapter.web.response.ResponseDuplicateCheck;
 import com.example.user_service.user.adapter.web.response.ResponseLogInUser;
 import com.example.user_service.user.adapter.web.response.ResponseSignUpUser;
-import com.example.user_service.user.application.ports.input.DuplicateCheckUseCase;
+import com.example.user_service.user.application.ports.input.ChangeUsernameUseCase;
 import com.example.user_service.user.application.ports.input.LogInUseCase;
 import com.example.user_service.user.application.ports.input.SignUpUseCase;
 import com.example.user_service.user.application.ports.input.UserInfoUseCase;
-import com.example.user_service.user.application.ports.output.dto.DuplicateCheckDto;
+import com.example.user_service.user.application.ports.output.dto.ChangeUsernameDto;
 import com.example.user_service.user.application.ports.output.dto.LogInDto;
 import com.example.user_service.user.application.ports.output.dto.SignUpDto;
 import com.example.user_service.user.application.ports.output.dto.UserInfoDto;
@@ -25,7 +26,7 @@ public class UserController {
 
     private final LogInUseCase logInUseCase;
     private final SignUpUseCase signUpUseCase;
-    private final DuplicateCheckUseCase duplicateCheckUseCase;
+    private final ChangeUsernameUseCase changeUsernameUseCase;
     private final UserInfoUseCase userInfoUseCase;
 
     //todo: ❗나중에 return 값 api response로 모두 수정해줘야 함.
@@ -34,8 +35,8 @@ public class UserController {
 
     /**
      * OAuth 로그인시 받을 수 있는 값들:
-     * 1. id: 구글 OAuth로 받아오는 아이디 값 -> 이 값이 유저마다 고유하기 때문에 uuid 값으로 대체해서 사용.
-     * 2. name: 구글의 유저 풀네임
+     * 1. id: 구글 OAuth로 받아오는 아이디 값 -> 이 값이 유저마다 고유하기 때문에 이 값을 uuid로 사용.
+     * 2. name: 구글의 유저 풀네임(사용하지 않음)
      * 3. email: 유저의 구글 이메일(사용)
      * 4. image: 유저의 구글 프로필 이미지(사용)
      */
@@ -69,7 +70,7 @@ public class UserController {
 
     /**
      * 회원가입 절차
-     * 1. 프론트에서 로그인 시도
+     * 1. 프론트에서 로그인 api호출
      * 2. 로그인 시도할 때 request로 던져준 email값이 DB에 없다면 회원가입 api 호출
      * 3. 회원가입 시에 request로 받은 값을 DB에 저장
      * 4. 회원가입 후에는 자동 로그인 처리
@@ -96,37 +97,35 @@ public class UserController {
         return ApiResponse.ofSuccess(responseSignUpUser);
     }
 
-    // 회원가입
+    // 유저네임 변경
+    @PostMapping("username")
+    public ApiResponse<Object> changeUsername(@Valid @RequestBody RequestChangeUsername requestChangeUsername) {
 
-    // 유저네임 중복 체크(기존 유저네임 변경에서)
-    @GetMapping("{username}/duplicate")
-    public ApiResponse<Object> checkDuplicateUsername(@PathVariable String username) {
-
-        DuplicateCheckDto checkDto =
-                duplicateCheckUseCase.checkDuplicateUsername(
-                        DuplicateCheckUseCase.CheckUsernameQuery.toQuery(username)
+        ChangeUsernameDto checkDto =
+                changeUsernameUseCase.changeUsername(ChangeUsernameUseCase.ChangeUsernameQuery.toQuery(
+                        requestChangeUsername.getUsername(), requestChangeUsername.getUuid())
                 );
         ResponseDuplicateCheck responseDuplicateCheck =
                 ResponseDuplicateCheck.builder()
-                        .isDuplicate(checkDto.getIsDuplicate())
+                        .username(checkDto.getUsername())
                         .build();
         return ApiResponse.ofSuccess(responseDuplicateCheck);
     }
 
-    // Google OAuth ID 중복 체크(가입 여부 조회를 위한)
-    @GetMapping("{oauthId}/duplicate")
-    public ApiResponse<Object> checkDuplicateOauthId(@PathVariable String oauthId) {
-
-        DuplicateCheckDto checkDto =
-                duplicateCheckUseCase.checkDuplicateGoogleAuth(
-                        DuplicateCheckUseCase.CheckGoogleAuthQuery.toQuery(oauthId)
-                );
-        ResponseDuplicateCheck responseDuplicateCheck =
-                ResponseDuplicateCheck.builder()
-                        .isDuplicate(checkDto.getIsDuplicate())
-                        .build();
-        return ApiResponse.ofSuccess(responseDuplicateCheck);
-    }
+//    // Google OAuth ID 중복 체크(가입 여부 조회를 위한)
+//    @GetMapping("{oauthId}/duplicate")
+//    public ApiResponse<Object> checkDuplicateOauthId(@PathVariable String oauthId) {
+//
+//        ChangeUsernameDto checkDto =
+//                changeUsernameUseCase.checkDuplicateGoogleAuth(
+//                        ChangeUsernameUseCase.CheckGoogleAuthQuery.toQuery(oauthId)
+//                );
+//        ResponseDuplicateCheck responseDuplicateCheck =
+//                ResponseDuplicateCheck.builder()
+//                        .isDuplicate(checkDto.getIsDuplicate())
+//                        .build();
+//        return ApiResponse.ofSuccess(responseDuplicateCheck);
+//    }
 
     // 회원 정보 불러오기
     @GetMapping("{uuid}/info")

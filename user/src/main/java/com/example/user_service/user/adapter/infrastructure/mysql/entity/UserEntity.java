@@ -77,4 +77,8 @@ public class UserEntity {
                 .uuid(user.getUuid())
                 .build();
     }
+
+    public void updateUsername(String username) {
+        this.username = username;
+    }
 }

@@ -6,7 +6,7 @@ public interface UserPort {
 
     User logInUser(User user);
     User signUpUser(User user);
-    Boolean checkDuplicateUsername(String username);
-    Boolean checkDuplicateGoogleAuth(String googleAuth);
+    User changeUsername(User user);
     User getUserInfo(String uuid);
+    Boolean checkDuplicateUsername(String username);
 }
