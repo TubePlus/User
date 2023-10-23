@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/users/")
 @RequiredArgsConstructor
-public class UsersController {
+public class UserController {
 
     private final LogInUseCase logInUseCase;
     private final SignUpUseCase signUpUseCase;
@@ -190,6 +190,7 @@ public class UsersController {
      * BE APIs
      */
     //todo: return 값이 uuid여야함.
+
     @GetMapping("{username}/uuid")
     public void getUuidByUsername(@PathVariable String username) {
 
