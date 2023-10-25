@@ -1,6 +1,5 @@
 package com.example.user_service.user.adapter.web.response;
 
-import com.example.user_service.user.domain.LangType;
 import com.example.user_service.user.domain.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +16,7 @@ public class ResponseSignUpUser {
     private String email;
     private String username;
     private String profileImage;
-    private LangType language;
+    private String locale;
     private Boolean darkMode;
     private RoleType role;
     private Boolean isCreator;

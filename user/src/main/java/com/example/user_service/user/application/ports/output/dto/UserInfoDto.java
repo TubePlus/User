@@ -1,6 +1,5 @@
 package com.example.user_service.user.application.ports.output.dto;
 
-import com.example.user_service.user.domain.LangType;
 import com.example.user_service.user.domain.RoleType;
 import com.example.user_service.user.domain.User;
 import lombok.AllArgsConstructor;
@@ -16,7 +15,7 @@ public class UserInfoDto {
     private String email;
     private String username;
     private String profileImage;
-    private LangType language;
+    private String locale;
     private String bio;
     private Boolean darkMode;
     private RoleType role;
@@ -28,7 +27,7 @@ public class UserInfoDto {
                 .uuid(user.getUuid())
                 .username(user.getUsername())
                 .profileImage(user.getProfileImage())
-                .language(user.getLanguage())
+                .locale(user.getLocale())
                 .bio(user.getBio())
                 .darkMode(user.getDarkMode())
                 .role(user.getRole())

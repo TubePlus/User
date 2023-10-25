@@ -9,7 +9,7 @@ import lombok.ToString;
 @Builder
 @Getter
 @ToString
-public class ResponseDuplicateCheck {
+public class ResponseChangeUsername {
 
     private String username;
 }
