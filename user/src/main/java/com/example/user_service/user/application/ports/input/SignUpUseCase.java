@@ -2,15 +2,15 @@ package com.example.user_service.user.application.ports.input;
 
 import com.example.user_service.user.adapter.web.request.RequestSignUpUser;
 import com.example.user_service.user.application.ports.output.dto.SignUpDto;
-import com.example.user_service.user.domain.LangType;
 import com.example.user_service.user.domain.RoleType;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 public interface SignUpUseCase {
 
-    SignUpDto signUpUser(SignUpQuery signUpQuery);
+    SignUpDto signUpUser(SignUpQuery signUpQuery) throws JsonProcessingException;
 
     // Request를 Dto로 변환
     @Getter
@@ -19,26 +19,24 @@ public interface SignUpUseCase {
     class SignUpQuery {
 
         private String username;
-        private String profileImage;
         private RoleType role; // default
         private Boolean isCreator; // default
         private String email;
-        private String uuid;
-        private LangType language; // default
+        private String locale;
         private Boolean darkMode; // default
         private Integer softDelete; // default
+        private String token;
 
         public static SignUpQuery toQuery(RequestSignUpUser requestSignUpUser) {
             return SignUpQuery.builder()
                     .username(requestSignUpUser.getUsername())
-                    .profileImage(requestSignUpUser.getProfileImage())
                     .role(RoleType.MEMBER) // default
                     .isCreator(false) // default
                     .email(requestSignUpUser.getEmail())
-                    .uuid(requestSignUpUser.getUuid())
-                    .language(LangType.KOREAN) // default
+                    .locale(requestSignUpUser.getLocale())
                     .darkMode(false) // default
                     .softDelete(1) // default
+                    .token(requestSignUpUser.getToken())
                     .build();
         }
     }

@@ -1,6 +1,5 @@
 package com.example.user_service.user.adapter.infrastructure.mysql.entity;
 
-import com.example.user_service.user.domain.LangType;
 import com.example.user_service.user.domain.RoleType;
 import com.example.user_service.user.domain.User;
 import jakarta.persistence.*;
@@ -28,9 +27,8 @@ public class UserEntity {
     @Column(name = "profile_image")
     private String profileImage;
 
-    @Column(name = "language")
-    @Enumerated(EnumType.STRING)
-    private LangType language;
+    @Column(name = "locale")
+    private String locale;
 
     @Column(nullable = false, name = "role")
     @Enumerated(EnumType.STRING)
@@ -65,7 +63,7 @@ public class UserEntity {
         return UserEntity.builder()
                 .username(user.getUsername())
                 .profileImage(user.getProfileImage())
-                .language(user.getLanguage())
+                .locale(user.getLocale())
                 .role(user.getRole())
                 .softDelete(user.getSoftDelete())
                 .bio(user.getBio())
@@ -80,5 +78,9 @@ public class UserEntity {
 
     public void updateUsername(String username) {
         this.username = username;
+    }
+
+    public void updateProfileImage(String profileImage) {
+        this.profileImage = profileImage;
     }
 }

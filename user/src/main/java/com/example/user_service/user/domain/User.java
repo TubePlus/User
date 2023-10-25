@@ -15,7 +15,7 @@ public class User {
     private Long id;
     private String username;
     private String profileImage;
-    private LangType language;
+    private String locale;
     private RoleType role;
     private Integer softDelete;
     private String bio;
@@ -26,15 +26,18 @@ public class User {
     private String email;
     private String uuid;
 
-    public static User logInUser(String email) {
+    public static User logInUser(String email, String profileImage) {
+
         return User.builder()
                 .email(email)
+                .profileImage(profileImage)
                 .build();
     }
 
     public static User signUpUser(
+
             String username, String profileImage, RoleType role, Boolean isCreator,
-            String email, String uuid, LangType language, Boolean darkMode, Integer softDelete) {
+            String email, String uuid, String locale, Boolean darkMode, Integer softDelete) {
         return User.builder()
                 .username(username)
                 .profileImage(profileImage)
@@ -42,13 +45,14 @@ public class User {
                 .isCreator(isCreator)
                 .email(email)
                 .uuid(uuid)
-                .language(language)
+                .locale(locale)
                 .darkMode(darkMode)
                 .softDelete(softDelete)
                 .build();
     }
 
     public static User changeUsername(String username, String uuid) {
+
         return User.builder()
                 .username(username)
                 .uuid(uuid)
@@ -56,10 +60,11 @@ public class User {
     }
 
     public static User userEntityToUser(UserEntity userEntity) {
+
         return User.builder()
                 .username(userEntity.getUsername())
                 .profileImage(userEntity.getProfileImage())
-                .language(userEntity.getLanguage())
+                .locale(userEntity.getLocale())
                 .role(userEntity.getRole())
                 .softDelete(userEntity.getSoftDelete())
                 .bio(userEntity.getBio())
