@@ -3,10 +3,12 @@ package com.example.user_service.user.adapter.web.request;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
+@RequiredArgsConstructor
 @ToString
 public class RequestSignUpUser {
 

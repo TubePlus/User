@@ -64,6 +64,99 @@ public class UserAdaptor implements UserPort {
         );
     }
 
+    // 크리에이터 등록
+    @Transactional
+    @Override
+    public User registerCreator(User user) {
+
+        // uuid로 해당 유저엔티티 조회
+        Optional<UserEntity> entityUser = userRepository.findByUuid(user.getUuid());
+        // 유저 엔티티의 크리에이터 여부, 크리에이터 카테고리 업데이트
+        entityUser.ifPresent(entity -> entity.registerCreator(user.getCategory()));
+        return entityUser.map(User::userEntityToUser).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+    }
+
+    // 크리에이터 카테고리 변경(크리에이터 정보 수정)
+    @Transactional
+    @Override
+    public User changeCreatorCategory(User user) {
+
+        // uuid로 해당 유저엔티티 조회
+        Optional<UserEntity> entityUser = userRepository.findByUuid(user.getUuid());
+        // 크리에이터인지 아닌지 여부 조회
+        entityUser.ifPresent(entity -> {
+            if (!entity.getIsCreator()) {
+                throw new BusinessException(ErrorCode.NOT_CREATOR);
+            }
+        });
+        // 크리에이터 카테고리 업데이트
+        entityUser.ifPresent(entity -> entity.updateCategory(user.getCategory()));
+        return entityUser.map(User::userEntityToUser).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+    }
+
+    // 크리에이터 등록 해제
+    @Transactional
+    @Override
+    public User deleteCreator(User user) {
+
+        // uuid로 해당 유저엔티티 조회
+        Optional<UserEntity> entityUser = userRepository.findByUuid(user.getUuid());
+        // 크리에이터인지 아닌지 여부 조회
+        entityUser.ifPresent(entity -> {
+            if (!entity.getIsCreator()) {
+                throw new BusinessException(ErrorCode.NOT_CREATOR);
+            }
+        });
+        // 유저 크리에이터 등록 해제
+        entityUser.ifPresent(UserEntity::deleteCreator);
+        return entityUser.map(User::userEntityToUser).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+    }
+
+    // 회원탈퇴
+    @Transactional
+    @Override
+    public User softDeleteUser(User user) {
+
+        // uuid로 해당 유저엔티티 조회
+        Optional<UserEntity> entityUser = userRepository.findByUuid(user.getUuid());
+        // 유저가 존재할 경우 유저 삭제처리
+        entityUser.ifPresent(UserEntity::softDelete);
+        return entityUser.map(User::userEntityToUser).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+    }
+
+    // 다크모드 변경
+    @Transactional
+    @Override
+    public User toggleDarkMode(User user) {
+
+        // uuid로 해당 유저엔티티 조회
+        Optional<UserEntity> entityUser = userRepository.findByUuid(user.getUuid());
+        // 유저 다크모드 설정 변경
+        entityUser.ifPresent(UserEntity::toggleDarkMode);
+        return entityUser.map(User::userEntityToUser).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+    }
+
+    // 유저 회원정보 조회
+    @Override
+    public User getUserInfo(User user) {
+
+        // uuid로 해당 유저엔티티 조회
+        Optional<UserEntity> entityUser = userRepository.findByUuid(user.getUuid());
+        return entityUser.map(User::userEntityToUser).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
+    }
+
     // 유저네임 중복 체크
     @Override
     public void checkDuplicateUsername(String username) {
@@ -72,14 +165,5 @@ public class UserAdaptor implements UserPort {
         if(userRepository.existsByUsername(username)) {
             throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
         }
-    }
-
-    // 유저 회원정보 조회
-    @Override
-    public User getUserInfo(String uuid) {
-
-//        UserEntity userEntity = userRepository.findByUuid(uuid);
-//        return User.userEntityToUser(userEntity);
-        return null;
     }
 }

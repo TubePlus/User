@@ -1,12 +1,7 @@
 package com.example.user_service.user.adapter.web.controller;
 
-import com.example.user_service.user.adapter.web.request.RequestChangeUsername;
-import com.example.user_service.user.adapter.web.request.RequestLogInUser;
-import com.example.user_service.user.adapter.web.request.RequestSignUpUser;
-import com.example.user_service.user.adapter.web.response.ResponseChangeUsername;
-import com.example.user_service.user.adapter.web.response.ResponseIsDuplicate;
-import com.example.user_service.user.adapter.web.response.ResponseLogInUser;
-import com.example.user_service.user.adapter.web.response.ResponseSignUpUser;
+import com.example.user_service.user.adapter.web.request.*;
+import com.example.user_service.user.adapter.web.response.*;
 import com.example.user_service.user.application.ports.input.*;
 import com.example.user_service.user.application.ports.output.dto.*;
 import com.example.user_service.global.base.ApiResponse;
@@ -21,10 +16,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final LogInUseCase logInUseCase;
-    private final SignUpUseCase signUpUseCase;
-    private final ChangeUsernameUseCase changeUsernameUseCase;
+    private final UsernameUseCase usernameUseCase;
     private final UserInfoUseCase userInfoUseCase;
-    private final DuplicateUsernameUseCase duplicateUsernameUseCase;
+    private final CreatorUseCase creatorUseCase;
 
     //todo: return 값 api response로 모두 수정해줘야 함.
     // 프론트에서 youtube data api 사용 위한 토큰 값을 request로 받아오는 방향으로 수정.
@@ -51,7 +45,7 @@ public class UserController {
      * @param requestLoginUser Google OAuth를 통해 받은 id 값이 들어감
      * @return 로그인 후에 메인페이지로 redirect. 메인페이지에서 필요한 정보 return 해줌
      */
-    //todo: 휴면회원인지 체크해서 휴면일 경우 복귀하는 로직도 추가해야함
+    //todo: 휴면회원인지 체크해서 휴면일 경우 복귀하는 로직도 추가해야함(재가입 로직도 추가해야함)
     // Redis에 request로 받은 토큰 값 저장도 해야함.
     // 토큰 검증 api/로직도 만들어야함.
     @PostMapping("login")
@@ -89,7 +83,7 @@ public class UserController {
             @Valid @RequestBody RequestSignUpUser requestSignUpUser) throws JsonProcessingException {
 
         SignUpDto signUpDto =
-                signUpUseCase.signUpUser(SignUpUseCase.SignUpQuery.toQuery(requestSignUpUser));
+                logInUseCase.signUpUser(LogInUseCase.SignUpQuery.toQuery(requestSignUpUser));
         ResponseSignUpUser responseSignUpUser = ResponseSignUpUser.builder()
                 .uuid(signUpDto.getUuid())
                 .email(signUpDto.getEmail())
@@ -104,12 +98,12 @@ public class UserController {
     }
 
     // 회원가입 시 유저네임 중복 여부 체크
-    @GetMapping("users/{username}/duplicate")
+    @GetMapping("{username}/duplicate")
     public ApiResponse<Object> checkDuplicateUsername(@PathVariable String username) {
 
         IsDuplicateDto duplicateDto =
-                duplicateUsernameUseCase.checkDuplicateName(
-                        DuplicateUsernameUseCase.CheckDuplicateUsernameQuery.toQuery(username));
+                usernameUseCase.checkDuplicateName(
+                        UsernameUseCase.CheckDuplicateUsernameQuery.toQuery(username));
         ResponseIsDuplicate responseIsDuplicate = ResponseIsDuplicate.builder()
                 .isDuplicate(duplicateDto.getIsDuplicate())
                 .build();
@@ -121,7 +115,7 @@ public class UserController {
     public ApiResponse<Object> changeUsername(@Valid @RequestBody RequestChangeUsername requestChangeUsername) {
 
         ChangeUsernameDto changeUsernameDto =
-                changeUsernameUseCase.changeUsername(ChangeUsernameUseCase.ChangeUsernameQuery.toQuery(
+                usernameUseCase.changeUsername(UsernameUseCase.ChangeUsernameQuery.toQuery(
                         requestChangeUsername.getUsername(), requestChangeUsername.getUuid())
                 );
         ResponseChangeUsername responseChangeUsername =
@@ -131,75 +125,150 @@ public class UserController {
         return ApiResponse.ofSuccess(responseChangeUsername);
     }
 
-    // 회원 정보 불러오기
-    @GetMapping("{uuid}/info")
-    public void getUserInfo(@PathVariable String uuid) {
+    // 회원 정보 조회(회원정보 불러오기)
+    @PostMapping("info")
+    public ApiResponse<Object> getUserInfo(@Valid @RequestBody RequestReadUserInfo requestReadUserInfo) {
 
-        UserInfoDto userInfoDto = userInfoUseCase.getUserInfo(UserInfoUseCase.UserInfoQuery.toQuery(uuid));
-
+        ReadUserInfoDto readUserInfoDto =
+                userInfoUseCase.getUserInfo(UserInfoUseCase.GetUserInfoQuery.toQuery(
+                        requestReadUserInfo.getUuid()));
+        ResponseReadUserInfo responseReadUserInfo =
+                ResponseReadUserInfo.builder()
+                        .username(readUserInfoDto.getUsername())
+                        .profileImage(readUserInfoDto.getProfileImage())
+                        .locale(readUserInfoDto.getLocale())
+                        .role(readUserInfoDto.getRole())
+                        .bio(readUserInfoDto.getBio())
+                        .link(readUserInfoDto.getLink())
+                        .darkMode(readUserInfoDto.getDarkMode())
+                        .isCreator(readUserInfoDto.getIsCreator())
+                        .category(readUserInfoDto.getCategory())
+                        .build();
+        return ApiResponse.ofSuccess(responseReadUserInfo);
     }
 
-    @PutMapping("info")
-    public void updateUserInfo(/*request*/) {
-
-    }
-
-    @PutMapping("darkmode")
-    public void updateDarkMode(/*request*/) {
-
-    }
-
-    @PutMapping("softdelete")
-    public void softDelete(/*request*/) {
-
-    }
-
-    @PutMapping("retrieve") // 회원 복귀
-    public void comeBack(/*request*/) {
-
-    }
-
-    // 일반 유저 크리에이터로 전환
-//    @PutMapping("creators/create")
-//    public void registerCreator(RequestRegisterCreator requestRegisterCreator) {
+//    @PutMapping("info")
+//    public void updateUserInfo(/*request*/) {
 //
-//        RegisterCreatorDto registerCreatorDto =
+//    }
+    
+    // 다크모드 적용
+    @PutMapping("darkmode")
+    public ApiResponse<Object> updateDarkMode(@Valid @RequestBody RequestToggleDarkMode requestToggleDarkMode) {
+
+        ToggleDarkModeDto toggleDarkModeDto = userInfoUseCase.toggleDarkMode(
+                UserInfoUseCase.ToggleDarkModeQuery.toQuery(requestToggleDarkMode.getUuid()));
+        ResponseToggleDarkMode responseToggleDarkMode = ResponseToggleDarkMode.builder()
+                .darkMode(toggleDarkModeDto.getDarkMode())
+                .build();
+        return ApiResponse.ofSuccess(responseToggleDarkMode);
+    }
+
+    // 회원탈퇴
+    @PutMapping("softdelete")
+    public ApiResponse<Object> softDelete(@Valid @RequestBody RequestSoftDeleteUser requestSoftDeleteUser) {
+
+        SoftDeleteUserDto softDeleteUserDto
+                = userInfoUseCase.softDeleteUser(
+                        UserInfoUseCase.SoftDeleteUserQuery.toQuery(requestSoftDeleteUser.getUuid()));
+        ResponseSoftDeleteUser responseSoftDeleteUser = ResponseSoftDeleteUser.builder()
+                .email(softDeleteUserDto.getEmail())
+                .username(softDeleteUserDto.getUsername())
+                .status(softDeleteUserDto.getStatus())
+                .build();
+        return ApiResponse.ofSuccess(responseSoftDeleteUser);
+    }
+
+//    @PutMapping("retrieve") // 회원 복귀
+//    public void comeBack(/*request*/) {
+//
 //    }
 
+    /**
+     *
+     * @param requestUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(requestUpdateCreator)사용함.
+     * @return responseUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(responseUpdateCreator) 사용함.
+     */
+    // 일반 유저 크리에이터로 전환(크리에이터 등록)
+    @PutMapping("creators/create")
+    public ApiResponse<Object> registerCreator(RequestUpdateCreator requestUpdateCreator) {
 
+        UpdateCreatorDto updateCreatorDto = creatorUseCase.registerCreator(
+                CreatorUseCase.UpdateCreatorQuery.toQuery(
+                        requestUpdateCreator.getUuid(),
+                        requestUpdateCreator.getCategoryName()
+                )
+        );
+        ResponseUpdateCreator responseUpdateCreator = ResponseUpdateCreator.builder()
+                .username(updateCreatorDto.getUsername())
+                .isCreator(updateCreatorDto.getIsCreator())
+                .categoryName(updateCreatorDto.getCategoryName())
+                .build();
+        return ApiResponse.ofSuccess(responseUpdateCreator);
+    }
+
+    /**
+     *
+     * @param requestUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(requestUpdateCreator)사용함.
+     * @return responseUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(responseUpdateCreator) 사용함.
+     */
+    // 크리에이터 카테고리 변경(크리에이터 정보 수정)
     @PutMapping("creators")
-    public void updateCreatorCategory(/*request*/) {
+    public ApiResponse<Object> updateCreatorCategory(RequestUpdateCreator requestUpdateCreator) {
 
+        UpdateCreatorDto updateCreatorDto = creatorUseCase.changeCreatorCategory(
+                CreatorUseCase.UpdateCreatorQuery.toQuery(
+                        requestUpdateCreator.getUuid(),
+                        requestUpdateCreator.getCategoryName()
+                )
+        );
+        ResponseUpdateCreator responseUpdateCreator = ResponseUpdateCreator.builder()
+                .username(updateCreatorDto.getUsername())
+                .isCreator(updateCreatorDto.getIsCreator())
+                .categoryName(updateCreatorDto.getCategoryName())
+                .build();
+        return ApiResponse.ofSuccess(responseUpdateCreator);
     }
 
+    // 크리에이터 등록 해제(크리에이터에서 일반유저로 변경됨)
     @PutMapping("creators/rollback")
-    public void deleteCreator(/*request*/) {
+    public ApiResponse<Object> deleteCreator(RequestDeleteCreator requestDeleteCreator) {
 
+        DeleteCreatorDto deleteCreatorDto = creatorUseCase.deleteCreator(
+                CreatorUseCase.DeleteCreatorQuery.toQuery(
+                        requestDeleteCreator.getUuid()
+                )
+        );
+        ResponseDeleteCreator responseDeleteCreator = ResponseDeleteCreator.builder()
+                .username(deleteCreatorDto.getUsername())
+                .isCreator(deleteCreatorDto.getIsCreator())
+                .build();
+        return ApiResponse.ofSuccess(responseDeleteCreator);
     }
 
-    @GetMapping("{uuid}/creatorBookmarks")
-    public void getCreatorBookmarks(@PathVariable String uuid) {
-
-    }
-
-    @PostMapping("creatorBookmarks")
-    public void bookmarkCreator(/*request*/) {
-
-    }
-
-    @DeleteMapping("creatorBookmarks")
-    public void deleteCreatorBookmark(/*request*/) {
-
-    }
+//    @GetMapping("{uuid}/creatorBookmarks")
+//    public void getCreatorBookmarks(@PathVariable String uuid) {
+//
+//    }
+//
+//    @PostMapping("creatorBookmarks")
+//    public void bookmarkCreator(/*request*/) {
+//
+//    }
+//
+//    @DeleteMapping("creatorBookmarks")
+//    public void deleteCreatorBookmark(/*request*/) {
+//
+//    }
 
     /**
      * BE APIs
      */
     //todo: return 값이 uuid여야함.
 
-    @GetMapping("{username}/uuid")
-    public void getUuidByUsername(@PathVariable String username) {
-
-    }
+//    @GetMapping("{username}/uuid")
+//    public void getUuidByUsername(@PathVariable String username) {
+//
+//    }
 
 }

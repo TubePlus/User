@@ -6,8 +6,11 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Builder
-@AllArgsConstructor
 @Getter
 @ToString
-public class ResponseUserInfo {
+@AllArgsConstructor
+public class ResponseDeleteCreator {
+
+    private String username;
+    private Boolean isCreator;
 }

@@ -17,12 +17,12 @@ public class User {
     private String profileImage;
     private String locale;
     private RoleType role;
-    private Integer softDelete;
+    private StatusType status; // DELETED, ACTIVE, INACTIVE, BANNED, TEMPORAL_BAN
     private String bio;
     private List link;
     private Boolean darkMode;
     private Boolean isCreator;
-    private List category;
+    private String category; //todo: 카테고리 타입으로 변경하기
     private String email;
     private String uuid;
 
@@ -34,10 +34,9 @@ public class User {
                 .build();
     }
 
-    public static User signUpUser(
+    public static User signUpUser(String username, String profileImage, RoleType role, Boolean isCreator,
+            String email, String uuid, String locale, Boolean darkMode, StatusType status) {
 
-            String username, String profileImage, RoleType role, Boolean isCreator,
-            String email, String uuid, String locale, Boolean darkMode, Integer softDelete) {
         return User.builder()
                 .username(username)
                 .profileImage(profileImage)
@@ -47,7 +46,7 @@ public class User {
                 .uuid(uuid)
                 .locale(locale)
                 .darkMode(darkMode)
-                .softDelete(softDelete)
+                .status(status)
                 .build();
     }
 
@@ -59,6 +58,42 @@ public class User {
                 .build();
     }
 
+    public static User updateCreator(String uuid, String categoryName) {
+
+        return User.builder()
+                .uuid(uuid)
+                .category(categoryName)
+                .build();
+    }
+
+    public static User deleteCreator(String uuid) {
+
+        return User.builder()
+                .uuid(uuid)
+                .build();
+    }
+
+    public static User softDeleteUser(String uuid) {
+
+        return User.builder()
+                .uuid(uuid)
+                .build();
+    }
+
+    public static User toggleDarkMode(String uuid) {
+
+        return User.builder()
+                .uuid(uuid)
+                .build();
+    }
+
+    public static User getUserInfo(String uuid) {
+
+        return User.builder()
+                .uuid(uuid)
+                .build();
+    }
+
     public static User userEntityToUser(UserEntity userEntity) {
 
         return User.builder()
@@ -66,12 +101,12 @@ public class User {
                 .profileImage(userEntity.getProfileImage())
                 .locale(userEntity.getLocale())
                 .role(userEntity.getRole())
-                .softDelete(userEntity.getSoftDelete())
+                .status(userEntity.getStatus())
                 .bio(userEntity.getBio())
                 .link((List) userEntity.getLink())
                 .darkMode(userEntity.getDarkMode())
                 .isCreator(userEntity.getIsCreator())
-                .category((List) userEntity.getCategory())
+                .category(userEntity.getCategory())
                 .email(userEntity.getEmail())
                 .uuid(userEntity.getUuid())
                 .build();
