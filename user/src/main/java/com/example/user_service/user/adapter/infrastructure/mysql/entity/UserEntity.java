@@ -1,6 +1,7 @@
 package com.example.user_service.user.adapter.infrastructure.mysql.entity;
 
 import com.example.user_service.user.domain.RoleType;
+import com.example.user_service.user.domain.StatusType;
 import com.example.user_service.user.domain.User;
 import jakarta.persistence.*;
 import org.hibernate.mapping.List;
@@ -34,9 +35,9 @@ public class UserEntity {
     @Enumerated(EnumType.STRING)
     private RoleType role;
 
-    @Column(nullable = false, name ="soft_delete")
-//    @Enumerated(EnumType.STRING)
-    private Integer softDelete;
+    @Column(nullable = false, name ="status")
+    @Enumerated(EnumType.STRING)
+    private StatusType status; // DELETED, ACTIVE, INACTIVE, BANNED, TEMPORAL_BAN
 
     @Column(name ="bio")
     private String bio;
@@ -51,7 +52,7 @@ public class UserEntity {
     private Boolean isCreator;
 
     @Column(name = "category")
-    private List category; // todo: 추후 변경? ArrayList<Enum> category로
+    private String category; // todo: 추후 변경? Enum category로
 
     @Column(nullable = false, name = "email")
     private String email;
@@ -65,12 +66,12 @@ public class UserEntity {
                 .profileImage(user.getProfileImage())
                 .locale(user.getLocale())
                 .role(user.getRole())
-                .softDelete(user.getSoftDelete())
+                .status(user.getStatus())
                 .bio(user.getBio())
                 .link((List) user.getLink())
                 .darkMode(user.getDarkMode())
                 .isCreator(user.getIsCreator())
-                .category((List) user.getCategory())
+                .category(user.getCategory())
                 .email(user.getEmail())
                 .uuid(user.getUuid())
                 .build();
@@ -82,5 +83,27 @@ public class UserEntity {
 
     public void updateProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public void registerCreator(String category) {
+        this.isCreator = true;
+        this.category = category;
+    }
+
+    public void updateCategory(String category) {
+        this.category = category;
+    }
+
+    public void deleteCreator() {
+        this.isCreator = false;
+        this.category = null;
+    }
+
+    public void softDelete() {
+        this.status = StatusType.DELETED;
+    }
+
+    public void toggleDarkMode() {
+        this.darkMode = !this.darkMode;
     }
 }

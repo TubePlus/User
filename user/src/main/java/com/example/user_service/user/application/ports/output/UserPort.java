@@ -7,7 +7,11 @@ public interface UserPort {
     User logInUser(User user);
     User signUpUser(User user);
     User changeUsername(User user);
-//    User registerCreator(User user);
-    User getUserInfo(String uuid);
+    User registerCreator(User user);
+    User changeCreatorCategory(User user);
+    User deleteCreator(User user);
+    User getUserInfo(User user);
+    User softDeleteUser(User user);
+    User toggleDarkMode(User user);
     void checkDuplicateUsername(String username);
 }

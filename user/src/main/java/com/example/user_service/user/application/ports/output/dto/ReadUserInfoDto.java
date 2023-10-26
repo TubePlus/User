@@ -6,32 +6,35 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
-public class UserInfoDto {
+public class ReadUserInfoDto {
 
-    private String uuid; //todo: uuid 계속 보내줘야하는지 팀원들이랑 얘기해보고 지우기
-    private String email;
     private String username;
     private String profileImage;
     private String locale;
-    private String bio;
-    private Boolean darkMode;
     private RoleType role;
+    private String bio;
+    private List<String> link;
+    private Boolean darkMode;
     private Boolean isCreator;
+    private String category;
 
-    public static UserInfoDto formUserInfoDto(User user) {
+    public static ReadUserInfoDto formUserInfoDto(User user) {
 
-        return UserInfoDto.builder()
-                .uuid(user.getUuid())
+        return ReadUserInfoDto.builder()
                 .username(user.getUsername())
                 .profileImage(user.getProfileImage())
                 .locale(user.getLocale())
-                .bio(user.getBio())
-                .darkMode(user.getDarkMode())
                 .role(user.getRole())
+                .bio(user.getBio())
+                .link(user.getLink())
+                .darkMode(user.getDarkMode())
                 .isCreator(user.getIsCreator())
+                .category(user.getCategory())
                 .build();
     }
 }

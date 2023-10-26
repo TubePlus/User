@@ -8,12 +8,10 @@ import lombok.ToString;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 @ToString
-public class RequestChangeUsername {
+public class RequestSoftDeleteUser {
 
     @NotNull
     private String uuid;
-
-    @NotNull
-    private String username;
 }
