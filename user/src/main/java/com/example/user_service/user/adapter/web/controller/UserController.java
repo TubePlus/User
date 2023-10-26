@@ -4,12 +4,10 @@ import com.example.user_service.user.adapter.web.request.RequestChangeUsername;
 import com.example.user_service.user.adapter.web.request.RequestLogInUser;
 import com.example.user_service.user.adapter.web.request.RequestSignUpUser;
 import com.example.user_service.user.adapter.web.response.ResponseChangeUsername;
+import com.example.user_service.user.adapter.web.response.ResponseIsDuplicate;
 import com.example.user_service.user.adapter.web.response.ResponseLogInUser;
 import com.example.user_service.user.adapter.web.response.ResponseSignUpUser;
-import com.example.user_service.user.application.ports.input.ChangeUsernameUseCase;
-import com.example.user_service.user.application.ports.input.LogInUseCase;
-import com.example.user_service.user.application.ports.input.SignUpUseCase;
-import com.example.user_service.user.application.ports.input.UserInfoUseCase;
+import com.example.user_service.user.application.ports.input.*;
 import com.example.user_service.user.application.ports.output.dto.*;
 import com.example.user_service.global.base.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -26,6 +24,7 @@ public class UserController {
     private final SignUpUseCase signUpUseCase;
     private final ChangeUsernameUseCase changeUsernameUseCase;
     private final UserInfoUseCase userInfoUseCase;
+    private final DuplicateUsernameUseCase duplicateUsernameUseCase;
 
     //todo: return 값 api response로 모두 수정해줘야 함.
     // 프론트에서 youtube data api 사용 위한 토큰 값을 request로 받아오는 방향으로 수정.
@@ -36,10 +35,10 @@ public class UserController {
 
     /**
      * OAuth 로그인시 받을 수 있는 값들:
-     * 1. id: 구글 OAuth로 받아오는 아이디 값 -> 이 값이 유저마다 고유하기 때문에 이 값을 uuid로 사용.
+     * 1. id: 구글 OAuth로 받아오는 아이디 값(사용하지 않음)
      * 2. name: 구글의 유저 풀네임(사용하지 않음)
      * 3. email: 유저의 구글 이메일(사용)
-     * 4. image: 유저의 구글 프로필 이미지(사용)
+     * 4. image: 유저의 구글 프로필 이미지(사용하지 않음)
      */
 
     // 로그인
@@ -102,6 +101,19 @@ public class UserController {
                 .isCreator(signUpDto.getIsCreator())
                 .build();
         return ApiResponse.ofSuccess(responseSignUpUser);
+    }
+
+    // 회원가입 시 유저네임 중복 여부 체크
+    @GetMapping("users/{username}/duplicate")
+    public ApiResponse<Object> checkDuplicateUsername(@PathVariable String username) {
+
+        IsDuplicateDto duplicateDto =
+                duplicateUsernameUseCase.checkDuplicateName(
+                        DuplicateUsernameUseCase.CheckDuplicateUsernameQuery.toQuery(username));
+        ResponseIsDuplicate responseIsDuplicate = ResponseIsDuplicate.builder()
+                .isDuplicate(duplicateDto.getIsDuplicate())
+                .build();
+        return ApiResponse.ofSuccess(responseIsDuplicate);
     }
 
     // 유저네임 변경

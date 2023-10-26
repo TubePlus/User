@@ -14,7 +14,8 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class UserService implements
-        LogInUseCase, SignUpUseCase, ChangeUsernameUseCase, UserInfoUseCase/*, RegisterCreatorUseCase*/ {
+        LogInUseCase, SignUpUseCase, ChangeUsernameUseCase, UserInfoUseCase, DuplicateUsernameUseCase
+        /*, RegisterCreatorUseCase*/ {
 
     private final UserPort userPort;
     private final YoutubeService youtubeService;
@@ -54,6 +55,16 @@ public class UserService implements
                 signUpQuery.getSoftDelete()
         ));
         return SignUpDto.formSignUpDto(user); // return 값으로 사용할 Dto
+    }
+
+    // 중복 조회
+    @Override
+    public IsDuplicateDto checkDuplicateName(CheckDuplicateUsernameQuery checkDuplicateUsernameQuery) {
+
+        checkDuplicateUsername(checkDuplicateUsernameQuery.getUsername());
+        return IsDuplicateDto.builder()
+                .isDuplicate(false)
+                .build();
     }
 
     // username 변경(기존의 username을 새로운 username으로 변경 시 사용)
