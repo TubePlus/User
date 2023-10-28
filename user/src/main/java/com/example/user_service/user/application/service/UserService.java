@@ -60,6 +60,19 @@ public class UserService implements
         return SignUpDto.formSignUpDto(user); // return 값으로 사용할 Dto
     }
 
+    @Override
+    public ComeBackDto comeBackUser(ComeBackQuery comeBackQuery) throws JsonProcessingException {
+
+        // youtube data api로 profile image 받아오기.
+        GetMyChannelDto dto = youtubeService.getMyProfileImage(comeBackQuery.getToken());
+
+        User user = userPort.comeBackUser(User.comeBackUser(
+                comeBackQuery.getEmail(),
+                dto.getUrl()
+        ));
+        return ComeBackDto.formComeBackDto(user);
+    }
+
     // 유저네임 중복 조회
     @Override
     public IsDuplicateDto checkDuplicateName(CheckDuplicateUsernameQuery checkDuplicateUsernameQuery) {
@@ -114,6 +127,17 @@ public class UserService implements
 
         User user = userPort.deleteCreator(User.deleteCreator(deleteCreatorQuery.getUuid()));
         return DeleteCreatorDto.formDeleteCreatorDto(user);
+    }
+
+    // 크리에이터 검색 자동완성
+    // todo: 미완성입니다.
+    @Override
+    public SearchCreatorsDto autoSearchCreators(AutoSearchCreatorsQuery autoSearchCreatorsQuery) {
+
+        User user = userPort.autoSearchCreators(User.autoSearchCreators(
+                autoSearchCreatorsQuery.getQ()
+        ));
+        return null; //todo: 수정하기
     }
 
     // 유저 정보 조회하기

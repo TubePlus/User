@@ -19,6 +19,7 @@ public class YoutubeServiceImpl implements YoutubeService{
 
     private final WebClient webClient;
 
+    // 내 채널 정보 조회 기능
     @Override
     public GetMyChannelDto getMyChannelInfo(String token) throws JsonProcessingException {
 

@@ -106,4 +106,8 @@ public class UserEntity {
     public void toggleDarkMode() {
         this.darkMode = !this.darkMode;
     }
+
+    public void comeBack() {
+        this.status = StatusType.ACTIVE;
+    }
 }

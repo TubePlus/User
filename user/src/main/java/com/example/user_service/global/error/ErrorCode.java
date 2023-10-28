@@ -22,7 +22,11 @@ public enum ErrorCode {
     /*유저*/
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "U001", "존재하지 않는 유저입니다."),
     DUPLICATE_USERNAME(HttpStatus.CONFLICT, "U002", "이미 존재하는 유저네임입니다."),
-    NOT_CREATOR(HttpStatus.NOT_FOUND, "U003", "해당 유저는 크리에이터가 아닙니다.");
+    NOT_CREATOR(HttpStatus.NOT_FOUND, "U003", "해당 유저는 크리에이터가 아닙니다."),
+    INACTIVE_USER(HttpStatus.BAD_REQUEST, "U004", "휴면유저입니다."),
+    BANNED_USER(HttpStatus.BAD_REQUEST, "U005", "정지된 유저입니다."),
+    TEMPORAL_BANNED_USER(HttpStatus.BAD_REQUEST, "U006", "일시정지된 유저입니다."),
+    DELETED_USER(HttpStatus.BAD_REQUEST, "U007", "탈퇴한 유저입니다.");
 
 
     private final HttpStatus status;

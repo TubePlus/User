@@ -2,14 +2,20 @@ package com.example.user_service.user.adapter.infrastructure.mysql.persistence;
 
 import com.example.user_service.global.error.ErrorCode;
 import com.example.user_service.global.error.handler.BusinessException;
+import com.example.user_service.user.adapter.infrastructure.mysql.entity.QUserEntity;
 import com.example.user_service.user.adapter.infrastructure.mysql.entity.UserEntity;
 import com.example.user_service.user.adapter.infrastructure.mysql.repository.UserRepository;
 import com.example.user_service.user.application.ports.output.UserPort;
+import com.example.user_service.user.domain.StatusType;
 import com.example.user_service.user.domain.User;
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -18,6 +24,7 @@ import java.util.Optional;
 public class UserAdaptor implements UserPort {
 
     private final UserRepository userRepository;
+    private final EntityManager em;
 
     // 로그인
     @Transactional
@@ -28,6 +35,22 @@ public class UserAdaptor implements UserPort {
 
         // 해당 이메일과 일치하는 유저 데이터 존재하는지 여부 확인
         if (userEntity.isPresent()) {
+
+            // 해당 유저 상태 조회(탈퇴, 정지, 비활성화 등. 비활성화 시 회원복귀 api 호출됨)
+            StatusType userStatus = userEntity.get().getStatus();
+
+            switch (userStatus) {
+
+                case INACTIVE:
+                    throw new BusinessException(ErrorCode.INACTIVE_USER);
+
+                case BANNED, TEMPORAL_BAN:
+                    throw new BusinessException(ErrorCode.BANNED_USER);
+
+                case DELETED:
+                    throw new BusinessException(ErrorCode.DELETED_USER);
+            }
+
             // 존재하면 프로필 이미지 변경 여부 확인 -> 변경 시 프로필 업데이트
             boolean sameProfile = userEntity.get().getProfileImage().equals(user.getProfileImage());
             if (!sameProfile) {
@@ -48,6 +71,20 @@ public class UserAdaptor implements UserPort {
 
         UserEntity userEntity = UserEntity.userToUserEntity(user);
         return User.userEntityToUser(userRepository.save(userEntity));
+    }
+
+    // 휴면회원복귀
+    @Transactional
+    @Override
+    public User comeBackUser(User user) {
+
+        Optional<UserEntity> userEntity = userRepository.findByEmail(user.getEmail());
+
+        // 유저 상태 ACTIVE로 전환
+        userEntity.ifPresent(UserEntity::comeBack);
+        return userEntity.map(User::userEntityToUser).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
+        );
     }
 
     // 유저네임 변경
@@ -144,6 +181,21 @@ public class UserAdaptor implements UserPort {
         return entityUser.map(User::userEntityToUser).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
         );
+    }
+
+    @Override
+    public User autoSearchCreators(User user) {
+
+        JPAQueryFactory query = new JPAQueryFactory(em);
+        QUserEntity u = QUserEntity.userEntity;
+
+        List<Tuple> result = query.select(u.username, u.category, u.profileImage, u.bio)
+                .from(u)
+                .where(u.username.contains(user.getUsername()))
+                .limit(5)
+                .fetch();
+        System.out.println(result);
+        return null;
     }
 
     // 유저 회원정보 조회

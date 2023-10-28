@@ -1,5 +1,8 @@
 package com.example.user_service.user.application.ports.input;
 
+import com.example.user_service.user.adapter.web.request.RequestReadUserInfo;
+import com.example.user_service.user.adapter.web.request.RequestSoftDeleteUser;
+import com.example.user_service.user.adapter.web.request.RequestToggleDarkMode;
 import com.example.user_service.user.application.ports.output.dto.SoftDeleteUserDto;
 import com.example.user_service.user.application.ports.output.dto.ToggleDarkModeDto;
 import com.example.user_service.user.application.ports.output.dto.ReadUserInfoDto;
@@ -19,10 +22,10 @@ public interface UserInfoUseCase {
 
         private String uuid;
 
-        public static GetUserInfoQuery toQuery(String uuid) {
+        public static GetUserInfoQuery toQuery(RequestReadUserInfo requestReadUserInfo) {
 
             return GetUserInfoQuery.builder()
-                    .uuid(uuid)
+                    .uuid(requestReadUserInfo.getUuid())
                     .build();
         }
     }
@@ -33,10 +36,10 @@ public interface UserInfoUseCase {
 
         private String uuid;
 
-        public static SoftDeleteUserQuery toQuery(String uuid) {
+        public static SoftDeleteUserQuery toQuery(RequestSoftDeleteUser requestSoftDeleteUser) {
 
             return SoftDeleteUserQuery.builder()
-                    .uuid(uuid)
+                    .uuid(requestSoftDeleteUser.getUuid())
                     .build();
         }
     }
@@ -47,10 +50,10 @@ public interface UserInfoUseCase {
 
         private String uuid;
 
-        public static ToggleDarkModeQuery toQuery(String uuid) {
+        public static ToggleDarkModeQuery toQuery(RequestToggleDarkMode requestToggleDarkMode) {
 
             return ToggleDarkModeQuery.builder()
-                    .uuid(uuid)
+                    .uuid(requestToggleDarkMode.getUuid())
                     .build();
         }
     }

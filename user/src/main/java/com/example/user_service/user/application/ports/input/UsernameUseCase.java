@@ -1,5 +1,6 @@
 package com.example.user_service.user.application.ports.input;
 
+import com.example.user_service.user.adapter.web.request.RequestChangeUsername;
 import com.example.user_service.user.application.ports.output.dto.ChangeUsernameDto;
 import com.example.user_service.user.application.ports.output.dto.IsDuplicateDto;
 import lombok.Builder;
@@ -19,10 +20,10 @@ public interface UsernameUseCase {
         private String uuid;
         private String username;
 
-        public static ChangeUsernameQuery toQuery(String username, String uuid) {
+        public static ChangeUsernameQuery toQuery(RequestChangeUsername requestChangeUsername) {
             return ChangeUsernameQuery.builder()
-                    .username(username)
-                    .uuid(uuid)
+                    .username(requestChangeUsername.getUsername())
+                    .uuid(requestChangeUsername.getUuid())
                     .build();
         }
     }

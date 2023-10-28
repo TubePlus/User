@@ -53,6 +53,7 @@ public class UserController {
             @Valid @RequestBody RequestLogInUser requestLoginUser) throws JsonProcessingException {
 
         LogInDto logInDto = logInUseCase.logInUser(LogInUseCase.LogInQuery.toQuery(requestLoginUser));
+
         ResponseLogInUser responseLogInUser = ResponseLogInUser.builder()
                 .uuid(logInDto.getUuid())
                 .email(logInDto.getEmail())
@@ -63,6 +64,7 @@ public class UserController {
                 .role(logInDto.getRole())
                 .isCreator(logInDto.getIsCreator())
                 .build();
+
         return ApiResponse.ofSuccess(responseLogInUser);
     }
 
@@ -84,6 +86,7 @@ public class UserController {
 
         SignUpDto signUpDto =
                 logInUseCase.signUpUser(LogInUseCase.SignUpQuery.toQuery(requestSignUpUser));
+
         ResponseSignUpUser responseSignUpUser = ResponseSignUpUser.builder()
                 .uuid(signUpDto.getUuid())
                 .email(signUpDto.getEmail())
@@ -94,6 +97,7 @@ public class UserController {
                 .role(signUpDto.getRole())
                 .isCreator(signUpDto.getIsCreator())
                 .build();
+
         return ApiResponse.ofSuccess(responseSignUpUser);
     }
 
@@ -104,9 +108,11 @@ public class UserController {
         IsDuplicateDto duplicateDto =
                 usernameUseCase.checkDuplicateName(
                         UsernameUseCase.CheckDuplicateUsernameQuery.toQuery(username));
+
         ResponseIsDuplicate responseIsDuplicate = ResponseIsDuplicate.builder()
                 .isDuplicate(duplicateDto.getIsDuplicate())
                 .build();
+
         return ApiResponse.ofSuccess(responseIsDuplicate);
     }
 
@@ -115,13 +121,14 @@ public class UserController {
     public ApiResponse<Object> changeUsername(@Valid @RequestBody RequestChangeUsername requestChangeUsername) {
 
         ChangeUsernameDto changeUsernameDto =
-                usernameUseCase.changeUsername(UsernameUseCase.ChangeUsernameQuery.toQuery(
-                        requestChangeUsername.getUsername(), requestChangeUsername.getUuid())
+                usernameUseCase.changeUsername(UsernameUseCase.ChangeUsernameQuery.toQuery(requestChangeUsername)
                 );
+
         ResponseChangeUsername responseChangeUsername =
                 ResponseChangeUsername.builder()
                         .username(changeUsernameDto.getUsername())
                         .build();
+
         return ApiResponse.ofSuccess(responseChangeUsername);
     }
 
@@ -130,8 +137,8 @@ public class UserController {
     public ApiResponse<Object> getUserInfo(@Valid @RequestBody RequestReadUserInfo requestReadUserInfo) {
 
         ReadUserInfoDto readUserInfoDto =
-                userInfoUseCase.getUserInfo(UserInfoUseCase.GetUserInfoQuery.toQuery(
-                        requestReadUserInfo.getUuid()));
+                userInfoUseCase.getUserInfo(UserInfoUseCase.GetUserInfoQuery.toQuery(requestReadUserInfo));
+
         ResponseReadUserInfo responseReadUserInfo =
                 ResponseReadUserInfo.builder()
                         .username(readUserInfoDto.getUsername())
@@ -144,6 +151,7 @@ public class UserController {
                         .isCreator(readUserInfoDto.getIsCreator())
                         .category(readUserInfoDto.getCategory())
                         .build();
+
         return ApiResponse.ofSuccess(responseReadUserInfo);
     }
 
@@ -157,10 +165,12 @@ public class UserController {
     public ApiResponse<Object> updateDarkMode(@Valid @RequestBody RequestToggleDarkMode requestToggleDarkMode) {
 
         ToggleDarkModeDto toggleDarkModeDto = userInfoUseCase.toggleDarkMode(
-                UserInfoUseCase.ToggleDarkModeQuery.toQuery(requestToggleDarkMode.getUuid()));
+                UserInfoUseCase.ToggleDarkModeQuery.toQuery(requestToggleDarkMode));
+
         ResponseToggleDarkMode responseToggleDarkMode = ResponseToggleDarkMode.builder()
                 .darkMode(toggleDarkModeDto.getDarkMode())
                 .build();
+
         return ApiResponse.ofSuccess(responseToggleDarkMode);
     }
 
@@ -170,19 +180,33 @@ public class UserController {
 
         SoftDeleteUserDto softDeleteUserDto
                 = userInfoUseCase.softDeleteUser(
-                        UserInfoUseCase.SoftDeleteUserQuery.toQuery(requestSoftDeleteUser.getUuid()));
+                        UserInfoUseCase.SoftDeleteUserQuery.toQuery(requestSoftDeleteUser));
+
         ResponseSoftDeleteUser responseSoftDeleteUser = ResponseSoftDeleteUser.builder()
                 .email(softDeleteUserDto.getEmail())
                 .username(softDeleteUserDto.getUsername())
                 .status(softDeleteUserDto.getStatus())
                 .build();
+
         return ApiResponse.ofSuccess(responseSoftDeleteUser);
     }
 
-//    @PutMapping("retrieve") // 회원 복귀
-//    public void comeBack(/*request*/) {
-//
-//    }
+    // 회원 복귀
+    @PutMapping("retrieve")
+    public ApiResponse<Object> comeBack(
+            @Valid @RequestBody RequestUserComeBack requestUserComeBack) throws JsonProcessingException {
+
+        ComeBackDto comeBackDto = logInUseCase.comeBackUser(
+                LogInUseCase.ComeBackQuery.toQuery(requestUserComeBack));
+
+        ResponseComeBackUser responseComeBackUser = ResponseComeBackUser.builder()
+                .email(comeBackDto.getEmail())
+                .username(comeBackDto.getUsername())
+                .status(comeBackDto.getStatus())
+                .build();
+
+        return ApiResponse.ofSuccess(responseComeBackUser);
+    }
 
     /**
      *
@@ -191,19 +215,18 @@ public class UserController {
      */
     // 일반 유저 크리에이터로 전환(크리에이터 등록)
     @PutMapping("creators/create")
-    public ApiResponse<Object> registerCreator(RequestUpdateCreator requestUpdateCreator) {
+    public ApiResponse<Object> registerCreator(@Valid @RequestBody RequestUpdateCreator requestUpdateCreator) {
 
         UpdateCreatorDto updateCreatorDto = creatorUseCase.registerCreator(
-                CreatorUseCase.UpdateCreatorQuery.toQuery(
-                        requestUpdateCreator.getUuid(),
-                        requestUpdateCreator.getCategoryName()
-                )
+                CreatorUseCase.UpdateCreatorQuery.toQuery(requestUpdateCreator)
         );
+
         ResponseUpdateCreator responseUpdateCreator = ResponseUpdateCreator.builder()
                 .username(updateCreatorDto.getUsername())
                 .isCreator(updateCreatorDto.getIsCreator())
                 .categoryName(updateCreatorDto.getCategoryName())
                 .build();
+
         return ApiResponse.ofSuccess(responseUpdateCreator);
     }
 
@@ -214,36 +237,46 @@ public class UserController {
      */
     // 크리에이터 카테고리 변경(크리에이터 정보 수정)
     @PutMapping("creators")
-    public ApiResponse<Object> updateCreatorCategory(RequestUpdateCreator requestUpdateCreator) {
+    public ApiResponse<Object> updateCreatorCategory(@Valid @RequestBody RequestUpdateCreator requestUpdateCreator) {
 
         UpdateCreatorDto updateCreatorDto = creatorUseCase.changeCreatorCategory(
-                CreatorUseCase.UpdateCreatorQuery.toQuery(
-                        requestUpdateCreator.getUuid(),
-                        requestUpdateCreator.getCategoryName()
-                )
+                CreatorUseCase.UpdateCreatorQuery.toQuery(requestUpdateCreator)
         );
+
         ResponseUpdateCreator responseUpdateCreator = ResponseUpdateCreator.builder()
                 .username(updateCreatorDto.getUsername())
                 .isCreator(updateCreatorDto.getIsCreator())
                 .categoryName(updateCreatorDto.getCategoryName())
                 .build();
+
         return ApiResponse.ofSuccess(responseUpdateCreator);
     }
 
     // 크리에이터 등록 해제(크리에이터에서 일반유저로 변경됨)
     @PutMapping("creators/rollback")
-    public ApiResponse<Object> deleteCreator(RequestDeleteCreator requestDeleteCreator) {
+    public ApiResponse<Object> deleteCreator(@Valid @RequestBody RequestDeleteCreator requestDeleteCreator) {
 
         DeleteCreatorDto deleteCreatorDto = creatorUseCase.deleteCreator(
-                CreatorUseCase.DeleteCreatorQuery.toQuery(
-                        requestDeleteCreator.getUuid()
-                )
+                CreatorUseCase.DeleteCreatorQuery.toQuery(requestDeleteCreator)
         );
+
         ResponseDeleteCreator responseDeleteCreator = ResponseDeleteCreator.builder()
                 .username(deleteCreatorDto.getUsername())
                 .isCreator(deleteCreatorDto.getIsCreator())
                 .build();
+
         return ApiResponse.ofSuccess(responseDeleteCreator);
+    }
+
+    // todo: Redis 사용할지도... 아마도? 일단은 JPQL 사용
+    // todo: 미완성입니다.
+    // 크리에이터 검색시 검색어 자동완성 조회 기능
+    @GetMapping("creators")
+    public ApiResponse<Object> SearchAutoComplete(@RequestParam String q) {
+
+        creatorUseCase.autoSearchCreators(CreatorUseCase.AutoSearchCreatorsQuery.toQuery(q));
+
+        return ApiResponse.ofSuccess();
     }
 
 //    @GetMapping("{uuid}/creatorBookmarks")

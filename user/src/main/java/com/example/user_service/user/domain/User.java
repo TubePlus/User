@@ -50,6 +50,14 @@ public class User {
                 .build();
     }
 
+    public static User comeBackUser(String email, String profileImage) {
+
+        return User.builder()
+                .email(email)
+                .profileImage(profileImage)
+                .build();
+    }
+
     public static User changeUsername(String username, String uuid) {
 
         return User.builder()
@@ -91,6 +99,13 @@ public class User {
 
         return User.builder()
                 .uuid(uuid)
+                .build();
+    }
+
+    public static User autoSearchCreators(String q) {
+
+        return User.builder()
+                .username(q)
                 .build();
     }
 

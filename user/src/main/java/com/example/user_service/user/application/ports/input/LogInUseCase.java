@@ -2,19 +2,20 @@ package com.example.user_service.user.application.ports.input;
 
 import com.example.user_service.user.adapter.web.request.RequestLogInUser;
 import com.example.user_service.user.adapter.web.request.RequestSignUpUser;
+import com.example.user_service.user.adapter.web.request.RequestUserComeBack;
+import com.example.user_service.user.application.ports.output.dto.ComeBackDto;
 import com.example.user_service.user.application.ports.output.dto.LogInDto;
 import com.example.user_service.user.application.ports.output.dto.SignUpDto;
-import com.example.user_service.user.domain.RoleType;
-import com.example.user_service.user.domain.StatusType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 public interface LogInUseCase {
 
     LogInDto logInUser(LogInQuery logInQuery) throws JsonProcessingException;
     SignUpDto signUpUser(SignUpQuery signUpQuery) throws JsonProcessingException;
+    ComeBackDto comeBackUser(ComeBackQuery comeBackQuery) throws JsonProcessingException;
+
 
     // Request를 Dto로 변환
     @Getter
@@ -25,6 +26,7 @@ public interface LogInUseCase {
         private String token;
 
         public static LogInQuery toQuery(RequestLogInUser requestLoginUser) {
+
             return LogInQuery.builder()
                     .email(requestLoginUser.getEmail())
                     .token(requestLoginUser.getToken())
@@ -34,7 +36,6 @@ public interface LogInUseCase {
 
     @Getter
     @Builder
-    @ToString
     class SignUpQuery {
 
         private String username;
@@ -43,11 +44,28 @@ public interface LogInUseCase {
         private String token;
 
         public static SignUpQuery toQuery(RequestSignUpUser requestSignUpUser) {
+
             return SignUpQuery.builder()
                     .username(requestSignUpUser.getUsername())
                     .email(requestSignUpUser.getEmail())
                     .locale(requestSignUpUser.getLocale())
                     .token(requestSignUpUser.getToken())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
+    class ComeBackQuery {
+
+        private String email;
+        private String token;
+
+        public static ComeBackQuery toQuery(RequestUserComeBack requestUserComeBack) {
+
+            return ComeBackQuery.builder()
+                    .email(requestUserComeBack.getEmail())
+                    .token(requestUserComeBack.getToken())
                     .build();
         }
     }
