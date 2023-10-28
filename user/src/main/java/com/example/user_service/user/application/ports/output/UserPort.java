@@ -6,6 +6,7 @@ public interface UserPort {
 
     User logInUser(User user);
     User signUpUser(User user);
+    User comeBackUser(User user);
     User changeUsername(User user);
     User registerCreator(User user);
     User changeCreatorCategory(User user);
@@ -13,5 +14,6 @@ public interface UserPort {
     User getUserInfo(User user);
     User softDeleteUser(User user);
     User toggleDarkMode(User user);
+    User autoSearchCreators(User user);
     void checkDuplicateUsername(String username);
 }
