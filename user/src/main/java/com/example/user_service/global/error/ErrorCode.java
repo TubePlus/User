@@ -26,7 +26,10 @@ public enum ErrorCode {
     INACTIVE_USER(HttpStatus.BAD_REQUEST, "U004", "휴면유저입니다."),
     BANNED_USER(HttpStatus.BAD_REQUEST, "U005", "정지된 유저입니다."),
     TEMPORAL_BANNED_USER(HttpStatus.BAD_REQUEST, "U006", "일시정지된 유저입니다."),
-    DELETED_USER(HttpStatus.BAD_REQUEST, "U007", "탈퇴한 유저입니다.");
+    DELETED_USER(HttpStatus.BAD_REQUEST, "U007", "탈퇴한 유저입니다."),
+
+    /*유튜브*/
+    YOUTUBE_ERROR(HttpStatus.BAD_REQUEST, "Y001", "유튜브 API 요청에 실패하였습니다.");
 
 
     private final HttpStatus status;
