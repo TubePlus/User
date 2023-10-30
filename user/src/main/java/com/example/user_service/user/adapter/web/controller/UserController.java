@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "*") //todo: 임시설정
 @RequestMapping("/api/v1/users/")
 @RequiredArgsConstructor
 public class UserController {
