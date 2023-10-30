@@ -12,7 +12,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**") // CORS를 적용할 URL 패턴 정의
                 .allowedOrigins("*") // 허용할 출처
                 .allowedMethods("GET", "POST") // 허용할 HTTP method
-                .maxAge(3000) // 원하는 시간만큼 pre-flight 리퀘스트를 캐싱
-                .exposedHeaders("jwt-token");
+                .maxAge(3000); // 원하는 시간만큼 pre-flight 리퀘스트를 캐싱
     }
 }
