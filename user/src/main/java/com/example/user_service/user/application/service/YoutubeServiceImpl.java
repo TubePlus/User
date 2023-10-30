@@ -22,7 +22,6 @@ public class YoutubeServiceImpl implements YoutubeService{
 
     // 내 채널 정보 조회 기능
     @Override
-    @CrossOrigin(origins = "*") //todo: 임시설정
     public GetMyChannelDto getMyChannelInfo(String token) throws JsonProcessingException {
 
         String partValues =
@@ -66,7 +65,6 @@ public class YoutubeServiceImpl implements YoutubeService{
 
     // 회원가입 및 로그인 시 유튜브 프로필 사진 업데이트
     @Override
-    @CrossOrigin(origins = "*") //todo: 임시설정
     public GetMyChannelDto getMyProfileImage(String token) throws JsonProcessingException {
 
         String response = webClient.get()
