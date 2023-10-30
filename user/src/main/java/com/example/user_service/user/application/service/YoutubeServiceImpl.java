@@ -1,5 +1,7 @@
 package com.example.user_service.user.application.service;
 
+import com.example.user_service.global.error.ErrorCode;
+import com.example.user_service.global.error.handler.BusinessException;
 import com.example.user_service.user.application.service.response.GetMyChannelDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -67,25 +69,54 @@ public class YoutubeServiceImpl implements YoutubeService{
     @Override
     public GetMyChannelDto getMyProfileImage(String token) throws JsonProcessingException {
 
-        String response = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/channels")
-                        .queryParam(
-                                "part", "snippet")
-                        .queryParam("mine", true)
-                        .build()
-                )
-                .headers(h -> h.setBearerAuth(token))
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(response);
-        String profileImageUrl =
-                jsonNode.get("items").get(0).get("snippet").get("thumbnails").get("high").get("url").asText();
+        try {
+            String response = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/channels")
+                            .queryParam(
+                                    "part", "snippet")
+                            .queryParam("mine", true)
+                            .build()
+                    )
+                    .headers(h -> h.setBearerAuth(token))
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
 
-        return GetMyChannelDto.builder()
-                .url(profileImageUrl)
-                .build();
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(response);
+
+            String profileImageUrl =
+                    jsonNode.get("items").get(0).get("snippet").get("thumbnails").get("high").get("url").asText();
+
+            return GetMyChannelDto.builder()
+                    .url(profileImageUrl)
+                    .build();
+
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.YOUTUBE_ERROR);
+        }
+//        String response = webClient.get()
+//                .uri(uriBuilder -> uriBuilder
+//                        .path("/channels")
+//                        .queryParam(
+//                                "part", "snippet")
+//                        .queryParam("mine", true)
+//                        .build()
+//                )
+//                .headers(h -> h.setBearerAuth(token))
+//                .retrieve()
+//                .bodyToMono(String.class)
+//                .block();
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        JsonNode jsonNode = objectMapper.readTree(response);
+//
+//        String profileImageUrl =
+//                jsonNode.get("items").get(0).get("snippet").get("thumbnails").get("high").get("url").asText();
+//
+//        return GetMyChannelDto.builder()
+//                .url(profileImageUrl)
+//                .build();
     }
 }
