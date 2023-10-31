@@ -186,10 +186,10 @@ public class UserAdaptor implements UserPort {
     @Override
     public User autoSearchCreators(User user) {
 
-        JPAQueryFactory query = new JPAQueryFactory(em);
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
         QUserEntity u = QUserEntity.userEntity;
 
-        List<Tuple> result = query.select(u.username, u.category, u.profileImage, u.bio)
+        List<Tuple> result = queryFactory.select(u.username, u.category, u.profileImage, u.bio)
                 .from(u)
                 .where(u.username.contains(user.getUsername()))
                 .limit(5)

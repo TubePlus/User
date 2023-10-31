@@ -6,6 +6,7 @@ import com.example.user_service.user.application.ports.input.*;
 import com.example.user_service.user.application.ports.output.dto.*;
 import com.example.user_service.global.base.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ public class UserController {
     private final UsernameUseCase usernameUseCase;
     private final UserInfoUseCase userInfoUseCase;
     private final CreatorUseCase creatorUseCase;
+    private final FavoritesUseCase favoritesUseCase;
 
     //todo: return 값 api response로 모두 수정해줘야 함.
     // 프론트에서 youtube data api 사용 위한 토큰 값을 request로 받아오는 방향으로 수정.
@@ -49,6 +51,7 @@ public class UserController {
     //todo: 휴면회원인지 체크해서 휴면일 경우 복귀하는 로직도 추가해야함(재가입 로직도 추가해야함)
     // Redis에 request로 받은 토큰 값 저장도 해야함.
     // 토큰 검증 api/로직도 만들어야함.
+    @Tag(name = "로그인/회원가입")
     @PostMapping("login")
     public ApiResponse<Object> login(
             @Valid @RequestBody RequestLogInUser requestLoginUser) throws JsonProcessingException {
@@ -81,6 +84,7 @@ public class UserController {
      */
     //todo: Redis에 request로 받은 토큰 값 저장도 해야함.
     // 임시로 생성한 uuid값 생성하는 로직 추가해야함.
+    @Tag(name = "로그인/회원가입")
     @PostMapping("signup")
     public ApiResponse<Object> signup(
             @Valid @RequestBody RequestSignUpUser requestSignUpUser) throws JsonProcessingException {
@@ -103,6 +107,7 @@ public class UserController {
     }
 
     // 회원가입 시 유저네임 중복 여부 체크
+    @Tag(name = "로그인/회원가입")
     @GetMapping("{username}/duplicate")
     public ApiResponse<Object> checkDuplicateUsername(@PathVariable String username) {
 
@@ -118,6 +123,7 @@ public class UserController {
     }
 
     // 유저네임 변경
+    @Tag(name = "회원정보 변경 및 조회")
     @PostMapping("username")
     public ApiResponse<Object> changeUsername(@Valid @RequestBody RequestChangeUsername requestChangeUsername) {
 
@@ -134,6 +140,7 @@ public class UserController {
     }
 
     // 회원 정보 조회(회원정보 불러오기)
+    @Tag(name = "회원정보 변경 및 조회")
     @PostMapping("info")
     public ApiResponse<Object> getUserInfo(@Valid @RequestBody RequestReadUserInfo requestReadUserInfo) {
 
@@ -162,6 +169,7 @@ public class UserController {
 //    }
     
     // 다크모드 적용
+    @Tag(name = "회원정보 변경 및 조회")
     @PutMapping("darkmode")
     public ApiResponse<Object> updateDarkMode(@Valid @RequestBody RequestToggleDarkMode requestToggleDarkMode) {
 
@@ -176,6 +184,7 @@ public class UserController {
     }
 
     // 회원탈퇴
+    @Tag(name = "회원정보 변경 및 조회")
     @PutMapping("softdelete")
     public ApiResponse<Object> softDelete(@Valid @RequestBody RequestSoftDeleteUser requestSoftDeleteUser) {
 
@@ -193,6 +202,7 @@ public class UserController {
     }
 
     // 회원 복귀
+    @Tag(name = "회원정보 변경 및 조회")
     @PutMapping("retrieve")
     public ApiResponse<Object> comeBack(
             @Valid @RequestBody RequestUserComeBack requestUserComeBack) throws JsonProcessingException {
@@ -215,6 +225,7 @@ public class UserController {
      * @return responseUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(responseUpdateCreator) 사용함.
      */
     // 일반 유저 크리에이터로 전환(크리에이터 등록)
+    @Tag(name = "회원정보 변경 및 조회")
     @PutMapping("creators/create")
     public ApiResponse<Object> registerCreator(@Valid @RequestBody RequestUpdateCreator requestUpdateCreator) {
 
@@ -237,6 +248,7 @@ public class UserController {
      * @return responseUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(responseUpdateCreator) 사용함.
      */
     // 크리에이터 카테고리 변경(크리에이터 정보 수정)
+    @Tag(name = "회원정보 변경 및 조회")
     @PutMapping("creators")
     public ApiResponse<Object> updateCreatorCategory(@Valid @RequestBody RequestUpdateCreator requestUpdateCreator) {
 
@@ -254,6 +266,7 @@ public class UserController {
     }
 
     // 크리에이터 등록 해제(크리에이터에서 일반유저로 변경됨)
+    @Tag(name = "회원정보 변경 및 조회")
     @PutMapping("creators/rollback")
     public ApiResponse<Object> deleteCreator(@Valid @RequestBody RequestDeleteCreator requestDeleteCreator) {
 
@@ -280,20 +293,56 @@ public class UserController {
         return ApiResponse.ofSuccess();
     }
 
-//    @GetMapping("{uuid}/creatorBookmarks")
-//    public void getCreatorBookmarks(@PathVariable String uuid) {
-//
-//    }
-//
-//    @PostMapping("creatorBookmarks")
-//    public void bookmarkCreator(/*request*/) {
-//
-//    }
-//
-//    @DeleteMapping("creatorBookmarks")
-//    public void deleteCreatorBookmark(/*request*/) {
-//
-//    }
+    // 즐겨찾는 크리에이터 추가
+    @Tag(name = "즐겨찾기 기능")
+    @PostMapping("favorites/create")
+    public ApiResponse<Object> getCreatorBookmarks(@Valid @RequestBody RequestAddFavorite requestAddFavorite) {
+
+        AddFavoriteDto addFavoriteDto = favoritesUseCase.addFavoriteCreator(
+                FavoritesUseCase.AddFavoriteCreatorQuery.toQuery(requestAddFavorite)
+        );
+
+        ResponseAddFavorite responseAddFavorite = ResponseAddFavorite.builder()
+                .userUuid(addFavoriteDto.getUserUuid())
+                .creatorUuid(addFavoriteDto.getCreatorUuid())
+                .build();
+
+        return ApiResponse.ofSuccess(responseAddFavorite);
+    }
+
+    // 즐겨찾는 크리에이터 조회
+    //todo: 크리에이터 커뮤니티 정보도 넣어야함.
+    @Tag(name = "즐겨찾기 기능")
+    @PostMapping("favorites/view")
+    public ApiResponse<Object> bookmarkCreator(@Valid @RequestBody RequestReadFavorites requestReadFavorites) {
+
+        ReadFavoritesDto readFavoritesDto = favoritesUseCase.readFavoriteCreators(
+                FavoritesUseCase.ReadFavoriteCreatorsQuery.toQuery(requestReadFavorites)
+        );
+
+        ResponseReadFavorites responseReadFavorites = ResponseReadFavorites.builder()
+                .favoriteCreatorList(readFavoritesDto.getFavoriteCreatorList())
+                .build();
+
+        return ApiResponse.ofSuccess(responseReadFavorites);
+    }
+
+    // 즐겨찾는 크리에이터 삭제
+    @Tag(name = "즐겨찾기 기능")
+    @DeleteMapping("favorites")
+    public ApiResponse<Object> deleteCreatorBookmark(@Valid @RequestBody RequestDeleteFavorite requestDeleteFavorite) {
+
+        DeleteFavoriteDto deleteFavoriteDto = favoritesUseCase.deleteFavoriteCreator(
+                FavoritesUseCase.DeleteFavoriteCreatorQuery.toQuery(requestDeleteFavorite)
+        );
+
+        ResponseDeleteFavorite responseDeleteFavorite = ResponseDeleteFavorite.builder()
+                .userUuid(deleteFavoriteDto.getUserUuid())
+                .creatorUuid(deleteFavoriteDto.getCreatorUuid())
+                .build();
+
+        return ApiResponse.ofSuccess(responseDeleteFavorite);
+    }
 
     /**
      * BE APIs
