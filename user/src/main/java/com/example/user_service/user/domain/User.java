@@ -22,7 +22,7 @@ public class User {
     private List link;
     private Boolean darkMode;
     private Boolean isCreator;
-    private String category; //todo: 카테고리 타입으로 변경하기
+    private String category; //todo: 카테고리 ENUM 타입으로 변경하기
     private String email;
     private String uuid;
 
