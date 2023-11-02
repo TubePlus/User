@@ -8,6 +8,7 @@ public interface UserPort {
     User signUpUser(User user);
     User comeBackUser(User user);
     User changeUsername(User user);
+    Boolean checkCreator(User user);
     User registerCreator(User user);
     User changeCreatorCategory(User user);
     User deleteCreator(User user);

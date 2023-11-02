@@ -101,6 +101,17 @@ public class UserAdaptor implements UserPort {
         );
     }
 
+    // 크리에이터 여부 확인(서버간 API 통신)
+    // todo: 서버간 통신 API 사용하지 않을 경우에 삭제해야합니다.
+    @Override
+    public Boolean checkCreator(User user) {
+
+        // uuid로 해당 유저엔티티 조회
+        Optional<UserEntity> entityUser = userRepository.findByUuid(user.getUuid());
+
+        return entityUser.isPresent() && entityUser.get().getIsCreator();
+    }
+
     // 크리에이터 등록
     @Transactional
     @Override
