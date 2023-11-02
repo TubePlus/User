@@ -23,12 +23,8 @@ public class UserController {
     private final CreatorUseCase creatorUseCase;
     private final FavoritesUseCase favoritesUseCase;
 
-    //todo: return 값 api response로 모두 수정해줘야 함.
-    // 프론트에서 youtube data api 사용 위한 토큰 값을 request로 받아오는 방향으로 수정.
-    // 데이터 던져주고 받아줄 때 jwt 사용해서 해줘야 함.
-
-    // request 받을 때 requestbody에 @Valid 사용해서 validation 체크해줘야 함.uuid
-    // ⚠️uuid는 로그인/회원가입시에만 response로 프론트 단으로 return 해주므로 웬만해서는 다른 api를 통해서는 자제.
+    // request 받을 때 requestbody에 @Valid 사용해서 validation 체크.
+    // uuid는 로그인/회원가입시에만 response로 프론트 단으로 return.
 
     /**
      * OAuth 로그인시 받을 수 있는 값들:
@@ -36,6 +32,7 @@ public class UserController {
      * 2. name: 구글의 유저 풀네임(사용하지 않음)
      * 3. email: 유저의 구글 이메일(사용)
      * 4. image: 유저의 구글 프로필 이미지(사용하지 않음)
+     * 5. locale: 유저의 지역/언어(사용)
      */
 
     // 로그인
@@ -43,7 +40,7 @@ public class UserController {
      * 로그인 절차
      * 1. 프론트에서 OAuth를 통한 이메일을 백으로 던져준다.
      * 2. 백에서는 이메일을 통해 유저 정보를 조회한다.
-     * 3. 유저 정보가 없다면 커스텀 에러 return(프론트에서 회원가입 api 호출할 것임)
+     * 3. 유저 정보가 없다면 에러 return(프론트에서 회원가입 api 호출)
      * 4. 유저 정보가 있다면 로그인 완료(로그인 정보 return)
      * @param requestLoginUser Google OAuth를 통해 받은 id 값이 들어감
      * @return 로그인 후에 메인페이지로 redirect. 메인페이지에서 필요한 정보 return 해줌
@@ -79,11 +76,10 @@ public class UserController {
      * 2. 로그인 시도할 때 request로 던져준 email값이 DB에 없다면 회원가입 api 호출
      * 3. 회원가입 시에 request로 받은 값을 DB에 저장
      * 4. 회원가입 후에는 자동 로그인 처리
-     * @param requestSignUpUser username(유저가 입력), profileImage(Youtube API로 받는 값) / email, uuid(구글 OAuth로 받는 값)
+     * @param requestSignUpUser username(유저가 입력), token(유튜브 API용), email, locale(유저의 언어설정)
      * @return 로그인 시 return값과 같음
      */
     //todo: Redis에 request로 받은 토큰 값 저장도 해야함.
-    // 임시로 생성한 uuid값 생성하는 로직 추가해야함.
     @Tag(name = "로그인/회원가입")
     @PostMapping("signup")
     public ApiResponse<Object> signup(
@@ -163,6 +159,8 @@ public class UserController {
         return ApiResponse.ofSuccess(responseReadUserInfo);
     }
 
+////     회원 정보 변경
+//    @Tag(name = "회원정보 변경 및 조회")
 //    @PutMapping("info")
 //    public void updateUserInfo(/*request*/) {
 //
@@ -343,6 +341,27 @@ public class UserController {
 
         return ApiResponse.ofSuccess(responseDeleteFavorite);
     }
+
+    /**
+     * 서버 통신용 API
+     */
+    //todo: 크리에이터 여부 조회 API
+    // 서버간 통신 API 사용하지 않을 경우에 삭제해야합니다.
+    @Tag(name = "서버간 통신 API", description = "크리에이터 여부 조회 API")
+    @PostMapping("is-creator")
+    public ApiResponse<Object> checkCreator(@RequestBody RequestCheckCreator requestCheckCreator) {
+
+        CheckCreatorDto checkCreatorDto = creatorUseCase.checkCreator(
+                CreatorUseCase.CheckCreatorQuery.toQuery(requestCheckCreator)
+        );
+
+        ResponseCheckCreator responseCheckCreator = ResponseCheckCreator.builder()
+                .isCreator(checkCreatorDto.getIsCreator())
+                .build();
+
+        return ApiResponse.ofSuccess(responseCheckCreator);
+    }
+
 
     /**
      * BE APIs

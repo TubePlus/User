@@ -1,7 +1,9 @@
 package com.example.user_service.user.application.ports.input;
 
+import com.example.user_service.user.adapter.web.request.RequestCheckCreator;
 import com.example.user_service.user.adapter.web.request.RequestDeleteCreator;
 import com.example.user_service.user.adapter.web.request.RequestUpdateCreator;
+import com.example.user_service.user.application.ports.output.dto.CheckCreatorDto;
 import com.example.user_service.user.application.ports.output.dto.DeleteCreatorDto;
 import com.example.user_service.user.application.ports.output.dto.SearchCreatorsDto;
 import com.example.user_service.user.application.ports.output.dto.UpdateCreatorDto;
@@ -13,6 +15,7 @@ public interface CreatorUseCase {
     UpdateCreatorDto registerCreator(UpdateCreatorQuery registerCreatorQuery);
     UpdateCreatorDto changeCreatorCategory(UpdateCreatorQuery updateCreatorQuery);
     DeleteCreatorDto deleteCreator(DeleteCreatorQuery deleteCreatorQuery);
+    CheckCreatorDto checkCreator(CheckCreatorQuery checkCreatorQuery);
     SearchCreatorsDto autoSearchCreators(AutoSearchCreatorsQuery autoSearchCreatorsQuery); // todo: 미완성
 
     @Getter
@@ -41,6 +44,20 @@ public interface CreatorUseCase {
 
             return DeleteCreatorQuery.builder()
                     .uuid(requestDeleteCreator.getUuid())
+                    .build();
+        }
+    }
+
+    @Getter
+    @Builder
+    class CheckCreatorQuery {
+
+        private String uuid;
+
+        public static CheckCreatorQuery toQuery(RequestCheckCreator requestCheckCreator) {
+
+            return CheckCreatorQuery.builder()
+                    .uuid(requestCheckCreator.getUuid())
                     .build();
         }
     }

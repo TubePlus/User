@@ -1,7 +1,6 @@
 package com.example.user_service.user.application.service;
 
-import com.example.user_service.global.error.ErrorCode;
-import com.example.user_service.global.error.handler.BusinessException;
+
 import com.example.user_service.user.application.service.response.GetMyChannelDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
@@ -65,6 +63,7 @@ public class YoutubeServiceImpl implements YoutubeService{
                 .build();
     }
 
+    // todo: JSONParser와 비교해서 시간 측정
     // 회원가입 및 로그인 시 유튜브 프로필 사진 업데이트
     @Override
     public GetMyChannelDto getMyProfileImage(String token) throws JsonProcessingException {

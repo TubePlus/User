@@ -66,6 +66,13 @@ public class User {
                 .build();
     }
 
+    public static User checkCreator(String uuid) {
+
+        return User.builder()
+                .uuid(uuid)
+                .build();
+    }
+
     public static User updateCreator(String uuid, String categoryName) {
 
         return User.builder()

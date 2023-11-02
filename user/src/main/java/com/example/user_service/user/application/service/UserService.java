@@ -182,4 +182,15 @@ public class UserService implements
 
         userPort.checkDuplicateUsername(username);
     }
+
+    /**
+     * 서버간 통신용 API들의 로직
+     */
+    // todo: 서버간 통신 API 사용하지 않을 경우에 삭제해야합니다.
+    @Override
+    public CheckCreatorDto checkCreator(CheckCreatorQuery checkCreatorQuery) {
+
+        Boolean isCreator = userPort.checkCreator(User.checkCreator(checkCreatorQuery.getUuid()));
+        return CheckCreatorDto.formCheckCreatorDto(isCreator);
+    }
 }
