@@ -20,5 +20,6 @@ public class ResponseSignUpUser {
     private Boolean darkMode;
     private RoleType role;
     private Boolean isCreator;
+    private String youtubeHandler;
 
 }

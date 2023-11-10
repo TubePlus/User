@@ -6,6 +6,7 @@ import com.example.user_service.user.application.ports.input.*;
 import com.example.user_service.user.application.ports.output.dto.*;
 import com.example.user_service.global.base.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,6 @@ public class UserController {
      * 5. locale: 유저의 지역/언어(사용)
      */
 
-    // 로그인
     /**
      * 로그인 절차
      * 1. 프론트에서 OAuth를 통한 이메일을 백으로 던져준다.
@@ -48,7 +48,7 @@ public class UserController {
     //todo: 휴면회원인지 체크해서 휴면일 경우 복귀하는 로직도 추가해야함(재가입 로직도 추가해야함)
     // Redis에 request로 받은 토큰 값 저장도 해야함.
     // 토큰 검증 api/로직도 만들어야함.
-    @Tag(name = "로그인/회원가입")
+    @Tag(name = "로그인/회원가입") @Operation(summary = "로그인")
     @PostMapping("login")
     public ApiResponse<Object> login(
             @Valid @RequestBody RequestLogInUser requestLoginUser) throws JsonProcessingException {
@@ -64,12 +64,12 @@ public class UserController {
                 .darkMode(logInDto.getDarkMode())
                 .role(logInDto.getRole())
                 .isCreator(logInDto.getIsCreator())
+                .youtubeHandler(logInDto.getYoutubeHandler())
                 .build();
 
         return ApiResponse.ofSuccess(responseLogInUser);
     }
 
-    // 회원가입
     /**
      * 회원가입 절차
      * 1. 프론트에서 로그인 api호출
@@ -80,7 +80,7 @@ public class UserController {
      * @return 로그인 시 return값과 같음
      */
     //todo: Redis에 request로 받은 토큰 값 저장도 해야함.
-    @Tag(name = "로그인/회원가입")
+    @Tag(name = "로그인/회원가입") @Operation(summary = "회원가입")
     @PostMapping("signup")
     public ApiResponse<Object> signup(
             @Valid @RequestBody RequestSignUpUser requestSignUpUser) throws JsonProcessingException {
@@ -97,13 +97,13 @@ public class UserController {
                 .darkMode(signUpDto.getDarkMode())
                 .role(signUpDto.getRole())
                 .isCreator(signUpDto.getIsCreator())
+                .youtubeHandler(signUpDto.getYoutubeHandler())
                 .build();
 
         return ApiResponse.ofSuccess(responseSignUpUser);
     }
 
-    // 회원가입 시 유저네임 중복 여부 체크
-    @Tag(name = "로그인/회원가입")
+    @Tag(name = "로그인/회원가입") @Operation(summary = "유저네임 중복 여부 체크")
     @GetMapping("{username}/duplicate")
     public ApiResponse<Object> checkDuplicateUsername(@PathVariable String username) {
 
@@ -118,8 +118,7 @@ public class UserController {
         return ApiResponse.ofSuccess(responseIsDuplicate);
     }
 
-    // 유저네임 변경
-    @Tag(name = "회원정보 변경 및 조회")
+    @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "유저네임 변경")
     @PostMapping("username")
     public ApiResponse<Object> changeUsername(@Valid @RequestBody RequestChangeUsername requestChangeUsername) {
 
@@ -135,8 +134,7 @@ public class UserController {
         return ApiResponse.ofSuccess(responseChangeUsername);
     }
 
-    // 회원 정보 조회(회원정보 불러오기)
-    @Tag(name = "회원정보 변경 및 조회")
+    @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "회원정보 조회(회원정보 불러오기)")
     @PostMapping("info")
     public ApiResponse<Object> getUserInfo(@Valid @RequestBody RequestReadUserInfo requestReadUserInfo) {
 
@@ -154,6 +152,9 @@ public class UserController {
                         .darkMode(readUserInfoDto.getDarkMode())
                         .isCreator(readUserInfoDto.getIsCreator())
                         .category(readUserInfoDto.getCategory())
+                        .email(readUserInfoDto.getEmail())
+                        .uuid(readUserInfoDto.getUuid())
+                        .youtubeHandler(readUserInfoDto.getYoutubeHandler())
                         .build();
 
         return ApiResponse.ofSuccess(responseReadUserInfo);
@@ -165,9 +166,8 @@ public class UserController {
 //    public void updateUserInfo(/*request*/) {
 //
 //    }
-    
-    // 다크모드 적용
-    @Tag(name = "회원정보 변경 및 조회")
+
+    @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "다크모드 적용/해제")
     @PutMapping("darkmode")
     public ApiResponse<Object> updateDarkMode(@Valid @RequestBody RequestToggleDarkMode requestToggleDarkMode) {
 
@@ -181,8 +181,7 @@ public class UserController {
         return ApiResponse.ofSuccess(responseToggleDarkMode);
     }
 
-    // 회원탈퇴
-    @Tag(name = "회원정보 변경 및 조회")
+    @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "회원탈퇴")
     @PutMapping("softdelete")
     public ApiResponse<Object> softDelete(@Valid @RequestBody RequestSoftDeleteUser requestSoftDeleteUser) {
 
@@ -199,8 +198,7 @@ public class UserController {
         return ApiResponse.ofSuccess(responseSoftDeleteUser);
     }
 
-    // 회원 복귀
-    @Tag(name = "회원정보 변경 및 조회")
+    @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "휴면회원 복귀")
     @PutMapping("retrieve")
     public ApiResponse<Object> comeBack(
             @Valid @RequestBody RequestUserComeBack requestUserComeBack) throws JsonProcessingException {
@@ -209,8 +207,15 @@ public class UserController {
                 LogInUseCase.ComeBackQuery.toQuery(requestUserComeBack));
 
         ResponseComeBackUser responseComeBackUser = ResponseComeBackUser.builder()
+                .uuid(comeBackDto.getUuid())
                 .email(comeBackDto.getEmail())
                 .username(comeBackDto.getUsername())
+                .profileImage(comeBackDto.getProfileImage())
+                .locale(comeBackDto.getLocale())
+                .darkMode(comeBackDto.getDarkMode())
+                .role(comeBackDto.getRole())
+                .isCreator(comeBackDto.getIsCreator())
+                .youtubeHandler(comeBackDto.getYoutubeHandler())
                 .status(comeBackDto.getStatus())
                 .build();
 
@@ -222,8 +227,7 @@ public class UserController {
      * @param requestUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(requestUpdateCreator)사용함.
      * @return responseUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(responseUpdateCreator) 사용함.
      */
-    // 일반 유저 크리에이터로 전환(크리에이터 등록)
-    @Tag(name = "회원정보 변경 및 조회")
+    @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "크리에이터 전환")
     @PutMapping("creators/create")
     public ApiResponse<Object> registerCreator(@Valid @RequestBody RequestUpdateCreator requestUpdateCreator) {
 
@@ -245,8 +249,7 @@ public class UserController {
      * @param requestUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(requestUpdateCreator)사용함.
      * @return responseUpdateCreator 크리에이터 등록/크리에이터 수정 시에 같은 VO(responseUpdateCreator) 사용함.
      */
-    // 크리에이터 카테고리 변경(크리에이터 정보 수정)
-    @Tag(name = "회원정보 변경 및 조회")
+    @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "크리에이터 카테고리 변경")
     @PutMapping("creators")
     public ApiResponse<Object> updateCreatorCategory(@Valid @RequestBody RequestUpdateCreator requestUpdateCreator) {
 
@@ -263,8 +266,7 @@ public class UserController {
         return ApiResponse.ofSuccess(responseUpdateCreator);
     }
 
-    // 크리에이터 등록 해제(크리에이터에서 일반유저로 변경됨)
-    @Tag(name = "회원정보 변경 및 조회")
+    @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "크리에이터 등록 해제")
     @PutMapping("creators/rollback")
     public ApiResponse<Object> deleteCreator(@Valid @RequestBody RequestDeleteCreator requestDeleteCreator) {
 
@@ -291,8 +293,7 @@ public class UserController {
         return ApiResponse.ofSuccess();
     }
 
-    // 즐겨찾는 크리에이터 추가
-    @Tag(name = "즐겨찾기 기능")
+    @Tag(name = "즐겨찾기 기능") @Operation(summary = "크리에이터 즐겨찾기 추가")
     @PostMapping("favorites/create")
     public ApiResponse<Object> getCreatorBookmarks(@Valid @RequestBody RequestAddFavorite requestAddFavorite) {
 
@@ -308,9 +309,8 @@ public class UserController {
         return ApiResponse.ofSuccess(responseAddFavorite);
     }
 
-    // 즐겨찾는 크리에이터 조회
     //todo: 크리에이터 커뮤니티 정보도 넣어야함.
-    @Tag(name = "즐겨찾기 기능")
+    @Tag(name = "즐겨찾기 기능") @Operation(summary = "즐겨찾는 크리에이터 조회")
     @PostMapping("favorites/view")
     public ApiResponse<Object> bookmarkCreator(@Valid @RequestBody RequestReadFavorites requestReadFavorites) {
 
@@ -324,9 +324,8 @@ public class UserController {
 
         return ApiResponse.ofSuccess(responseReadFavorites);
     }
-
-    // 즐겨찾는 크리에이터 삭제
-    @Tag(name = "즐겨찾기 기능")
+    
+    @Tag(name = "즐겨찾기 기능") @Operation(summary = "크리에이터 즐겨찾기 삭제")
     @DeleteMapping("favorites")
     public ApiResponse<Object> deleteCreatorBookmark(@Valid @RequestBody RequestDeleteFavorite requestDeleteFavorite) {
 

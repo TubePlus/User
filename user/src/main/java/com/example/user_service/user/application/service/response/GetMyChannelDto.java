@@ -16,4 +16,5 @@ public class GetMyChannelDto {
     private String subscriberCount; // 구독자 수
     private String videoCount; // 총 비디오 수
     private String bannerExternalUrl; // 채널 배너 이미지
+    private String youtubeHandler; // 유튜브 핸들러
 }

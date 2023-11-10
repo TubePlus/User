@@ -7,7 +7,7 @@ public interface UserPort {
     User logInUser(User user);
     User signUpUser(User user);
     User comeBackUser(User user);
-    User changeUsername(User user);
+    User changeUsername(User user); // todo: User로 넘겨주지 말고 username과 uuid만 넘겨주기(파라미터로 바로 넘겨주기)
     Boolean checkCreator(User user);
     User registerCreator(User user);
     User changeCreatorCategory(User user);

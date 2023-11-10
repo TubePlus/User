@@ -22,6 +22,9 @@ public class ReadUserInfoDto {
     private Boolean darkMode;
     private Boolean isCreator;
     private String category;
+    private String email;
+    private String uuid;
+    private String youtubeHandler;
 
     public static ReadUserInfoDto formUserInfoDto(User user) {
 
@@ -35,6 +38,9 @@ public class ReadUserInfoDto {
                 .darkMode(user.getDarkMode())
                 .isCreator(user.getIsCreator())
                 .category(user.getCategory())
+                .email(user.getEmail())
+                .uuid(user.getUuid())
+                .youtubeHandler(user.getYoutubeHandler())
                 .build();
     }
 }

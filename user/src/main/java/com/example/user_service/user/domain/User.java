@@ -18,28 +18,32 @@ public class User {
     private String locale;
     private RoleType role;
     private StatusType status; // DELETED, ACTIVE, INACTIVE, BANNED, TEMPORAL_BAN
-    private String bio;
-    private List link;
-    private Boolean darkMode;
+    private String bio; // todo: 명시적인걸로 바꾸기 알아보기 쉽게
+    private List link; // todo: 따로 테이블로 빼기
+    private Boolean darkMode; // todo: 컨벤션 통일? -> isDarkMode
     private Boolean isCreator;
     private String category; //todo: 카테고리 ENUM 타입으로 변경하기
     private String email;
     private String uuid;
+    private String youtubeHandler; // 유튜브 핸들러 (@your-handler)
 
-    public static User logInUser(String email, String profileImage) {
+    public static User logInUser(String email, String profileImage, String youtubeHandler) {
 
         return User.builder()
                 .email(email)
                 .profileImage(profileImage)
+                .youtubeHandler(youtubeHandler)
                 .build();
     }
 
-    public static User signUpUser(String username, String profileImage, RoleType role, Boolean isCreator,
-            String email, String uuid, String locale, Boolean darkMode, StatusType status) {
+    public static User signUpUser(String username, String profileImage, String youtubeHandler,
+                                  RoleType role, Boolean isCreator, String email, String uuid,
+                                  String locale, Boolean darkMode, StatusType status) {
 
         return User.builder()
                 .username(username)
                 .profileImage(profileImage)
+                .youtubeHandler(youtubeHandler)
                 .role(role)
                 .isCreator(isCreator)
                 .email(email)
@@ -50,11 +54,12 @@ public class User {
                 .build();
     }
 
-    public static User comeBackUser(String email, String profileImage) {
+    public static User comeBackUser(String email, String profileImage, String youtubeHandler) {
 
         return User.builder()
                 .email(email)
                 .profileImage(profileImage)
+                .youtubeHandler(youtubeHandler)
                 .build();
     }
 
@@ -131,6 +136,7 @@ public class User {
                 .category(userEntity.getCategory())
                 .email(userEntity.getEmail())
                 .uuid(userEntity.getUuid())
+                .youtubeHandler(userEntity.getYoutubeHandler())
                 .build();
     }
 }

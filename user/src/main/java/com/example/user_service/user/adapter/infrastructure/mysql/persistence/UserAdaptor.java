@@ -29,10 +29,11 @@ public class UserAdaptor implements UserPort {
     // 로그인
     @Transactional
     @Override
-    public User logInUser(User user) {
+    public User logInUser(User user) { // todo: 어댑터는 repository와 연결하는 역할만 하도록 변경
 
         Optional<UserEntity> userEntity = userRepository.findByEmail(user.getEmail());
 
+        // todo: 아래의 로직은 전부 비즈니스 단으로 이동(UserService)
         // 해당 이메일과 일치하는 유저 데이터 존재하는지 여부 확인
         if (userEntity.isPresent()) {
 
@@ -51,11 +52,8 @@ public class UserAdaptor implements UserPort {
                     throw new BusinessException(ErrorCode.DELETED_USER);
             }
 
-            // 존재하면 프로필 이미지 변경 여부 확인 -> 변경 시 프로필 업데이트
-            boolean sameProfile = userEntity.get().getProfileImage().equals(user.getProfileImage());
-            if (!sameProfile) {
-                userEntity.get().updateProfileImage(user.getProfileImage());
-            }
+            // 유저 프로필/핸들러 변경 여부에 따른 업데이트
+            updateProfileImageAndHandler(userEntity, user);
         }
 
         // 일치하는 데이터 없으면 에러 처리
@@ -82,6 +80,10 @@ public class UserAdaptor implements UserPort {
 
         // 유저 상태 ACTIVE로 전환
         userEntity.ifPresent(UserEntity::comeBack);
+
+        // 유저 프로필/핸들러 변경 여부에 따른 업데이트
+        updateProfileImageAndHandler(userEntity, user);
+
         return userEntity.map(User::userEntityToUser).orElseThrow(
                 () -> new BusinessException(ErrorCode.NOT_FOUND_USER)
         );
@@ -227,6 +229,23 @@ public class UserAdaptor implements UserPort {
         // 유저네임이 이미 존재하면 커스텀 에러 반환
         if(userRepository.existsByUsername(username)) {
             throw new BusinessException(ErrorCode.DUPLICATE_USERNAME);
+        }
+    }
+
+    // 유저 프로필/핸들러 변경 여부에 따른 업데이트
+    @Transactional
+    public void updateProfileImageAndHandler(Optional<UserEntity> userEntity, User user) {
+
+        // 유저가 존재하면 프로필 이미지 변경 여부 확인 -> 변경 시 프로필 업데이트
+        boolean sameProfile = userEntity.get().getProfileImage().equals(user.getProfileImage());
+        if (!sameProfile) {
+            userEntity.get().updateProfileImage(user.getProfileImage());
+        }
+
+        // 유저가 존재하면 유튜브 핸들러 변경 여부 확인 -> 변경 시 유튜브 핸들러 업데이트
+        boolean sameYoutubeHandler = userEntity.get().getYoutubeHandler().equals(user.getYoutubeHandler());
+        if (!sameYoutubeHandler) {
+            userEntity.get().updateYoutubeHandler(user.getYoutubeHandler());
         }
     }
 }
