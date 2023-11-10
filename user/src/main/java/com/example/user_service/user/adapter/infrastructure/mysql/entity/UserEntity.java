@@ -60,6 +60,9 @@ public class UserEntity {
     @Column(nullable = false, name = "uuid")
     private String uuid;
 
+    @Column(nullable = false, name = "youtube_handler")
+    private String youtubeHandler;
+
     public static UserEntity userToUserEntity(User user) {
         return UserEntity.builder()
                 .username(user.getUsername())
@@ -74,6 +77,7 @@ public class UserEntity {
                 .category(user.getCategory())
                 .email(user.getEmail())
                 .uuid(user.getUuid())
+                .youtubeHandler(user.getYoutubeHandler())
                 .build();
     }
 
@@ -83,6 +87,10 @@ public class UserEntity {
 
     public void updateProfileImage(String profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public void updateYoutubeHandler(String youtubeHandler) {
+        this.youtubeHandler = youtubeHandler;
     }
 
     public void registerCreator(String category) {

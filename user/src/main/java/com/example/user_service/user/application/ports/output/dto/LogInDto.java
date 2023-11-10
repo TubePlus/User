@@ -19,6 +19,7 @@ public class LogInDto {
     private Boolean darkMode;
     private RoleType role;
     private Boolean isCreator;
+    private String youtubeHandler;
 
     // return 값을 담는 사용할 DTO
     public static LogInDto formLogInDto(User user) {
@@ -31,6 +32,7 @@ public class LogInDto {
                 .darkMode(user.getDarkMode())
                 .role(user.getRole())
                 .isCreator(user.getIsCreator())
+                .youtubeHandler(user.getYoutubeHandler())
                 .build();
     }
 }

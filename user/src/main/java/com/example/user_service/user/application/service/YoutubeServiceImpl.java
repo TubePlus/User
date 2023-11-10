@@ -51,6 +51,7 @@ public class YoutubeServiceImpl implements YoutubeService{
         String videoCount = jsonNode.get("items").get(0).get("statistics").get("videoCount").asText();
         String bannerImageUrl =
                 jsonNode.get("items").get(0).get("brandingSettings").get("image").get("bannerExternalUrl").asText();
+        String youtubeHandler = jsonNode.get("items").get(0).get("snippet").get("customUrl").asText();
 
         return GetMyChannelDto.builder()
                 .url(profileImageUrl)
@@ -60,13 +61,14 @@ public class YoutubeServiceImpl implements YoutubeService{
                 .subscriberCount(subscriberCount)
                 .videoCount(videoCount)
                 .bannerExternalUrl(bannerImageUrl)
+                .youtubeHandler(youtubeHandler)
                 .build();
     }
 
     // todo: JSONParser와 비교해서 시간 측정
-    // 회원가입 및 로그인 시 유튜브 프로필 사진 업데이트
+    // 회원가입 및 로그인 시 유튜브 프로필 사진, 유튜브 핸들러 업데이트
     @Override
-    public GetMyChannelDto getMyProfileImage(String token) throws JsonProcessingException {
+    public GetMyChannelDto getMyProfileImageAndHandler(String token) throws JsonProcessingException {
 
         String response = webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -86,9 +88,11 @@ public class YoutubeServiceImpl implements YoutubeService{
 
         String profileImageUrl =
                 jsonNode.get("items").get(0).get("snippet").get("thumbnails").get("high").get("url").asText();
+        String youtubeHandler = jsonNode.get("items").get(0).get("snippet").get("customUrl").asText();
 
         return GetMyChannelDto.builder()
                 .url(profileImageUrl)
+                .youtubeHandler(youtubeHandler)
                 .build();
     }
 }

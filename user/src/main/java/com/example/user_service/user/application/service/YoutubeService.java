@@ -6,5 +6,5 @@ import reactor.core.publisher.Mono;
 
 public interface YoutubeService {
     GetMyChannelDto getMyChannelInfo(String token) throws JsonProcessingException;
-    GetMyChannelDto getMyProfileImage(String token) throws JsonProcessingException;
+    GetMyChannelDto getMyProfileImageAndHandler(String token) throws JsonProcessingException;
 }

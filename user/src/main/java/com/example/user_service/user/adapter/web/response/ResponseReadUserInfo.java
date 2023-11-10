@@ -23,4 +23,7 @@ public class ResponseReadUserInfo {
     private Boolean darkMode;
     private Boolean isCreator;
     private String category;
+    private String email;
+    private String uuid;
+    private String youtubeHandler;
 }

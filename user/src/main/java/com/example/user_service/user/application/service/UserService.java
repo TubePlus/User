@@ -25,10 +25,10 @@ public class UserService implements
     @Override
     public LogInDto logInUser(LogInQuery logInQuery) throws JsonProcessingException {
 
-        // youtube data api로 profile image 받아오기.
-        GetMyChannelDto dto = youtubeService.getMyProfileImage(logInQuery.getToken());
+        // youtube data api로 profile image와 유튜브 핸들러 받아오기.
+        GetMyChannelDto dto = youtubeService.getMyProfileImageAndHandler(logInQuery.getToken());
 
-        User user = userPort.logInUser(User.logInUser(logInQuery.getEmail(), dto.getUrl()));
+        User user = userPort.logInUser(User.logInUser(logInQuery.getEmail(), dto.getUrl(), dto.getYoutubeHandler()));
         //todo: redis에 토큰 저장하는 로직 추가해야함.
         return LogInDto.formLogInDto(user); // return 값으로 사용할 Dto
     }
@@ -43,12 +43,13 @@ public class UserService implements
         // 신규유저의 uuid 생성
         String newUuid = generateUuid();
 
-        // youtube data api로 profile image 받아오기.
-        GetMyChannelDto dto = youtubeService.getMyProfileImage(signUpQuery.getToken());
+        // youtube data api로 profile image와 유튜브 핸들러 받아오기.
+        GetMyChannelDto dto = youtubeService.getMyProfileImageAndHandler(signUpQuery.getToken());
 
         User user = userPort.signUpUser(User.signUpUser(
                 signUpQuery.getUsername(),
                 dto.getUrl(),
+                dto.getYoutubeHandler(),
                 RoleType.MEMBER,
                 false,
                 signUpQuery.getEmail(),
@@ -60,15 +61,17 @@ public class UserService implements
         return SignUpDto.formSignUpDto(user); // return 값으로 사용할 Dto
     }
 
+    // 휴면 유저 복귀
     @Override
     public ComeBackDto comeBackUser(ComeBackQuery comeBackQuery) throws JsonProcessingException {
 
-        // youtube data api로 profile image 받아오기.
-        GetMyChannelDto dto = youtubeService.getMyProfileImage(comeBackQuery.getToken());
+        // youtube data api로 profile image와 유튜브 핸들러 받아오기.
+        GetMyChannelDto dto = youtubeService.getMyProfileImageAndHandler(comeBackQuery.getToken());
 
         User user = userPort.comeBackUser(User.comeBackUser(
                 comeBackQuery.getEmail(),
-                dto.getUrl()
+                dto.getUrl(),
+                dto.getYoutubeHandler()
         ));
         return ComeBackDto.formComeBackDto(user);
     }
