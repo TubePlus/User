@@ -151,6 +151,22 @@ public class UserService implements
         return ReadUserInfoDto.formUserInfoDto(user); // return 값으로 사용할 Dto
     }
 
+    // 유저 정보 수정하기
+    @Override
+    public UpdateUserInfoDto updateUserInfo(UpdateUserInfoQuery updateUserInfoQuery) {
+
+        User user = userPort.updateUserInfo(
+                User.updateUserInfo(
+                        updateUserInfoQuery.getUuid(),
+                        updateUserInfoQuery.getUsername(),
+                        updateUserInfoQuery.getProfileImage(),
+                        updateUserInfoQuery.getLocale(),
+                        updateUserInfoQuery.getBio()
+                ));
+
+        return UpdateUserInfoDto.formUpdateUserInfoDto(user);
+    }
+
     // 회원 탈퇴
     @Override
     public SoftDeleteUserDto softDeleteUser(SoftDeleteUserQuery softDeleteUserQuery) {

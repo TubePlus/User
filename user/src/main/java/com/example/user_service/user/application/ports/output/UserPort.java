@@ -13,6 +13,7 @@ public interface UserPort {
     User changeCreatorCategory(User user);
     User deleteCreator(User user);
     User getUserInfo(User user);
+    User updateUserInfo(User user);
     User softDeleteUser(User user);
     User toggleDarkMode(User user);
     User autoSearchCreators(User user);

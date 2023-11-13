@@ -114,6 +114,18 @@ public class User {
                 .build();
     }
 
+    public static User updateUserInfo(
+            String uuid, String username, String profileImage, String locale, String bio) {
+
+        return User.builder()
+                .uuid(uuid)
+                .username(username)
+                .profileImage(profileImage)
+                .locale(locale)
+                .bio(bio)
+                .build();
+    }
+
     public static User autoSearchCreators(String q) {
 
         return User.builder()

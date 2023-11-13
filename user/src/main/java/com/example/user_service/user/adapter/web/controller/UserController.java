@@ -160,12 +160,27 @@ public class UserController {
         return ApiResponse.ofSuccess(responseReadUserInfo);
     }
 
-////     회원 정보 변경
-//    @Tag(name = "회원정보 변경 및 조회")
-//    @PutMapping("info")
-//    public void updateUserInfo(/*request*/) {
-//
-//    }
+    @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "회원정보 변경")
+    @PutMapping("info")
+    public ApiResponse<Object> updateUserInfo(@Valid @RequestBody RequestUpdateUserInfo requestUpdateUserInfo) {
+
+        UpdateUserInfoDto updateUserInfoDto = userInfoUseCase.updateUserInfo(
+                UserInfoUseCase.UpdateUserInfoQuery.toQuery(requestUpdateUserInfo));
+
+        ResponseUpdateUserInfo responseUpdateUserInfo = ResponseUpdateUserInfo.builder()
+                .email(updateUserInfoDto.getEmail())
+                .username(updateUserInfoDto.getUsername())
+                .profileImage(updateUserInfoDto.getProfileImage())
+                .locale(updateUserInfoDto.getLocale())
+                .bio(updateUserInfoDto.getBio())
+                .darkMode(updateUserInfoDto.getDarkMode())
+                .role(updateUserInfoDto.getRole())
+                .isCreator(updateUserInfoDto.getIsCreator())
+                .youtubeHandler(updateUserInfoDto.getYoutubeHandler())
+                .build();
+
+        return ApiResponse.ofSuccess(responseUpdateUserInfo);
+    }
 
     @Tag(name = "회원정보 변경 및 조회") @Operation(summary = "다크모드 적용/해제")
     @PutMapping("darkmode")
