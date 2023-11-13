@@ -102,6 +102,13 @@ public class UserEntity {
         this.category = category;
     }
 
+    public void updateUserInfo(String username, String profileImage, String locale, String bio) {
+        this.username = username;
+        this.profileImage = profileImage;
+        this.locale = locale;
+        this.bio = bio;
+    }
+
     public void deleteCreator() {
         this.isCreator = false;
         this.category = null;

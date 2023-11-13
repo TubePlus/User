@@ -222,6 +222,22 @@ public class UserAdaptor implements UserPort {
         );
     }
 
+    // 유저 정보 수정
+    @Transactional
+    @Override
+    public User updateUserInfo(User user) {
+
+        Optional<UserEntity> entityUser = userRepository.findByUuid(user.getUuid());
+        entityUser.ifPresent(entity -> entity.updateUserInfo(
+                user.getUsername(),
+                user.getProfileImage(),
+                user.getLocale(),
+                user.getBio()
+        ));
+        return entityUser.map(User::userEntityToUser).orElseThrow(
+                () -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+    }
+
     // 유저네임 중복 체크
     @Override
     public void checkDuplicateUsername(String username) {
