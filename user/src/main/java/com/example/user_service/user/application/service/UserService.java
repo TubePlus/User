@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,10 +26,10 @@ public class UserService implements
     @Override
     public LogInDto logInUser(LogInQuery logInQuery) throws JsonProcessingException {
 
-        // youtube data api로 profile image와 유튜브 핸들러 받아오기.
+        // youtube data api로 채널 정보 받아오기.
         GetMyChannelDto dto = youtubeService.getMyProfileImageAndHandler(logInQuery.getToken());
 
-        User user = userPort.logInUser(User.logInUser(logInQuery.getEmail(), dto.getUrl(), dto.getYoutubeHandler()));
+        User user = userPort.logInUser(User.logInUser(logInQuery.getEmail(), dto.getYoutubeHandler()));
         //todo: redis에 토큰 저장하는 로직 추가해야함.
         return LogInDto.formLogInDto(user); // return 값으로 사용할 Dto
     }
@@ -133,14 +134,12 @@ public class UserService implements
     }
 
     // 크리에이터 검색 자동완성
-    // todo: 미완성입니다.
     @Override
-    public SearchCreatorsDto autoSearchCreators(AutoSearchCreatorsQuery autoSearchCreatorsQuery) {
+    public List<AutoSearchCreatorsDto> autoSearchCreators(AutoSearchCreatorsQuery autoSearchCreatorsQuery) {
 
-        User user = userPort.autoSearchCreators(User.autoSearchCreators(
-                autoSearchCreatorsQuery.getQ()
+        return userPort.autoSearchCreators(User.autoSearchCreators(
+                autoSearchCreatorsQuery.getUsername()
         ));
-        return null; //todo: 수정하기
     }
 
     // 유저 정보 조회하기

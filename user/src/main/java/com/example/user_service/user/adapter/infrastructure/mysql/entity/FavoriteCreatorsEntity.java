@@ -32,6 +32,4 @@ public class FavoriteCreatorsEntity {
                 .userUuid(favoriteCreator.getUserUuid())
                 .build();
     }
-
-
 }
