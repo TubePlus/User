@@ -5,10 +5,12 @@ import com.example.user_service.user.adapter.web.request.RequestDeleteCreator;
 import com.example.user_service.user.adapter.web.request.RequestUpdateCreator;
 import com.example.user_service.user.application.ports.output.dto.CheckCreatorDto;
 import com.example.user_service.user.application.ports.output.dto.DeleteCreatorDto;
-import com.example.user_service.user.application.ports.output.dto.SearchCreatorsDto;
+import com.example.user_service.user.application.ports.output.dto.AutoSearchCreatorsDto;
 import com.example.user_service.user.application.ports.output.dto.UpdateCreatorDto;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.List;
 
 public interface CreatorUseCase {
 
@@ -16,7 +18,7 @@ public interface CreatorUseCase {
     UpdateCreatorDto changeCreatorCategory(UpdateCreatorQuery updateCreatorQuery);
     DeleteCreatorDto deleteCreator(DeleteCreatorQuery deleteCreatorQuery);
     CheckCreatorDto checkCreator(CheckCreatorQuery checkCreatorQuery);
-    SearchCreatorsDto autoSearchCreators(AutoSearchCreatorsQuery autoSearchCreatorsQuery); // todo: 미완성
+    List<AutoSearchCreatorsDto> autoSearchCreators(AutoSearchCreatorsQuery autoSearchCreatorsQuery); // todo: 미완성
 
     @Getter
     @Builder
@@ -62,17 +64,16 @@ public interface CreatorUseCase {
         }
     }
 
-    // todo: 미완성입니다.
     @Getter
     @Builder
     class AutoSearchCreatorsQuery {
 
-        private String q; // 검색 키워드
+        private String username; // 검색 유저네임
 
-        public static AutoSearchCreatorsQuery toQuery(String q) {
+        public static AutoSearchCreatorsQuery toQuery(String username) {
 
             return AutoSearchCreatorsQuery.builder()
-                    .q(q)
+                    .username(username)
                     .build();
         }
     }

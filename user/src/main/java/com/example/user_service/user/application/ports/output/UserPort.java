@@ -1,6 +1,9 @@
 package com.example.user_service.user.application.ports.output;
 
+import com.example.user_service.user.application.ports.output.dto.AutoSearchCreatorsDto;
 import com.example.user_service.user.domain.User;
+
+import java.util.List;
 
 public interface UserPort {
 
@@ -16,6 +19,6 @@ public interface UserPort {
     User updateUserInfo(User user);
     User softDeleteUser(User user);
     User toggleDarkMode(User user);
-    User autoSearchCreators(User user);
+    List<AutoSearchCreatorsDto> autoSearchCreators(User user);
     void checkDuplicateUsername(String username);
 }

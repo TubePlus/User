@@ -6,9 +6,11 @@ import com.example.user_service.user.adapter.infrastructure.mysql.entity.QUserEn
 import com.example.user_service.user.adapter.infrastructure.mysql.entity.UserEntity;
 import com.example.user_service.user.adapter.infrastructure.mysql.repository.UserRepository;
 import com.example.user_service.user.application.ports.output.UserPort;
+import com.example.user_service.user.application.ports.output.dto.AutoSearchCreatorsDto;
 import com.example.user_service.user.domain.StatusType;
 import com.example.user_service.user.domain.User;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,7 @@ import java.util.Optional;
 public class UserAdaptor implements UserPort {
 
     private final UserRepository userRepository;
-    private final EntityManager em;
+    private final JPAQueryFactory queryFactory;
 
     // 로그인
     @Transactional
@@ -53,7 +55,7 @@ public class UserAdaptor implements UserPort {
             }
 
             // 유저 프로필/핸들러 변경 여부에 따른 업데이트
-            updateProfileImageAndHandler(userEntity, user);
+            updateHandler(userEntity, user);
         }
 
         // 일치하는 데이터 없으면 에러 처리
@@ -197,18 +199,26 @@ public class UserAdaptor implements UserPort {
     }
 
     @Override
-    public User autoSearchCreators(User user) {
+    public List<AutoSearchCreatorsDto> autoSearchCreators(User user) {
 
-        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-        QUserEntity u = QUserEntity.userEntity;
+        QUserEntity qUserEntity = QUserEntity.userEntity;
 
-        List<Tuple> result = queryFactory.select(u.username, u.category, u.profileImage, u.bio)
-                .from(u)
-                .where(u.username.contains(user.getUsername()))
+        return queryFactory.select(
+                Projections.fields(AutoSearchCreatorsDto.class,
+                        qUserEntity.uuid.as("creatorUuid"),
+                        qUserEntity.username,
+                        qUserEntity.category,
+                        qUserEntity.profileImage,
+                        qUserEntity.bio
+                ))
+                .from(qUserEntity)
+                .where(
+                        qUserEntity.username.contains(user.getUsername())
+                                .and(qUserEntity.isCreator.eq(true))
+                                .and(qUserEntity.status.eq(StatusType.ACTIVE))
+                )
                 .limit(5)
                 .fetch();
-        System.out.println(result);
-        return null;
     }
 
     // 유저 회원정보 조회
@@ -248,17 +258,28 @@ public class UserAdaptor implements UserPort {
         }
     }
 
+    // 유저 핸들러 변경 여부에 따른 업데이트
+    @Transactional
+    public void updateHandler(Optional<UserEntity> userEntity, User user) {
+
+        // 유저가 존재하면 유튜브 핸들러 변경 여부 확인, 변경되었을시 유튜브 핸들러 업데이트
+        boolean sameYoutubeHandler = userEntity.get().getYoutubeHandler().equals(user.getYoutubeHandler());
+        if (!sameYoutubeHandler) {
+            userEntity.get().updateYoutubeHandler(user.getYoutubeHandler());
+        }
+    }
+
     // 유저 프로필/핸들러 변경 여부에 따른 업데이트
     @Transactional
     public void updateProfileImageAndHandler(Optional<UserEntity> userEntity, User user) {
 
-        // 유저가 존재하면 프로필 이미지 변경 여부 확인 -> 변경 시 프로필 업데이트
-        boolean sameProfile = userEntity.get().getProfileImage().equals(user.getProfileImage());
-        if (!sameProfile) {
+        // 유저가 존재하면 유튜브 프로필 변경 여부 확인, 변경되었을시 프로필 업데이트
+        boolean sameYoutubeProfile = userEntity.get().getProfileImage().equals(user.getProfileImage());
+        if (!sameYoutubeProfile) {
             userEntity.get().updateProfileImage(user.getProfileImage());
         }
 
-        // 유저가 존재하면 유튜브 핸들러 변경 여부 확인 -> 변경 시 유튜브 핸들러 업데이트
+        // 유저가 존재하면 유튜브 핸들러 변경 여부 확인, 변경되었을시 유튜브 핸들러 업데이트
         boolean sameYoutubeHandler = userEntity.get().getYoutubeHandler().equals(user.getYoutubeHandler());
         if (!sameYoutubeHandler) {
             userEntity.get().updateYoutubeHandler(user.getYoutubeHandler());

@@ -27,11 +27,10 @@ public class User {
     private String uuid;
     private String youtubeHandler; // 유튜브 핸들러 (@your-handler)
 
-    public static User logInUser(String email, String profileImage, String youtubeHandler) {
+    public static User logInUser(String email, String youtubeHandler) {
 
         return User.builder()
                 .email(email)
-                .profileImage(profileImage)
                 .youtubeHandler(youtubeHandler)
                 .build();
     }
@@ -126,10 +125,10 @@ public class User {
                 .build();
     }
 
-    public static User autoSearchCreators(String q) {
+    public static User autoSearchCreators(String username) {
 
         return User.builder()
-                .username(q)
+                .username(username)
                 .build();
     }
 

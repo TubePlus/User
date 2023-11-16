@@ -50,5 +50,5 @@ spring:
 #      host: localhost
 #      port: 6379
 
-#  batch:
+#  batch:it
 #    initializer-schema: always

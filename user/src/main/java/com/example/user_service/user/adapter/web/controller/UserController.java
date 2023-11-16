@@ -10,7 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*") //todo: 임시설정
@@ -297,15 +300,14 @@ public class UserController {
         return ApiResponse.ofSuccess(responseDeleteCreator);
     }
 
-    // todo: Redis 사용할지도... 아마도? 일단은 JPQL 사용
-    // todo: 미완성입니다.
-    // 크리에이터 검색시 검색어 자동완성 조회 기능
-    @GetMapping("creators")
-    public ApiResponse<Object> SearchAutoComplete(@RequestParam String q) {
+    @Tag(name = "데이터 검색") @Operation(summary = "크리에이터 유저네임으로 검색(자동완성 검색)")
+    @GetMapping("creators/{username}")
+    public ApiResponse<Object> searchCreatorsByUsername(@PathVariable String username) {
 
-        creatorUseCase.autoSearchCreators(CreatorUseCase.AutoSearchCreatorsQuery.toQuery(q));
+        List<AutoSearchCreatorsDto> data =
+                creatorUseCase.autoSearchCreators(CreatorUseCase.AutoSearchCreatorsQuery.toQuery(username));
 
-        return ApiResponse.ofSuccess();
+        return ApiResponse.ofSuccess(data);
     }
 
     @Tag(name = "즐겨찾기 기능") @Operation(summary = "크리에이터 즐겨찾기 추가")
@@ -326,6 +328,8 @@ public class UserController {
 
     //todo: 크리에이터 커뮤니티 정보도 넣어야함.
     @Tag(name = "즐겨찾기 기능") @Operation(summary = "즐겨찾는 크리에이터 조회")
+    // 캐싱 적용 테스트
+    @Cacheable(cacheNames = "favoriteCreators", key = "#requestReadFavorites.uuid")
     @PostMapping("favorites/view")
     public ApiResponse<Object> bookmarkCreator(@Valid @RequestBody RequestReadFavorites requestReadFavorites) {
 
@@ -355,36 +359,4 @@ public class UserController {
 
         return ApiResponse.ofSuccess(responseDeleteFavorite);
     }
-
-    /**
-     * 서버 통신용 API
-     */
-    //todo: 크리에이터 여부 조회 API
-    // 서버간 통신 API 사용하지 않을 경우에 삭제해야합니다.
-    @Tag(name = "서버간 통신 API", description = "크리에이터 여부 조회 API")
-    @PostMapping("is-creator")
-    public ApiResponse<Object> checkCreator(@RequestBody RequestCheckCreator requestCheckCreator) {
-
-        CheckCreatorDto checkCreatorDto = creatorUseCase.checkCreator(
-                CreatorUseCase.CheckCreatorQuery.toQuery(requestCheckCreator)
-        );
-
-        ResponseCheckCreator responseCheckCreator = ResponseCheckCreator.builder()
-                .isCreator(checkCreatorDto.getIsCreator())
-                .build();
-
-        return ApiResponse.ofSuccess(responseCheckCreator);
-    }
-
-
-    /**
-     * BE APIs
-     */
-    //todo: return 값이 uuid여야함.
-
-//    @GetMapping("{username}/uuid")
-//    public void getUuidByUsername(@PathVariable String username) {
-//
-//    }
-
 }
