@@ -17,6 +17,7 @@ public class ResponseLogInUser {
     private String username;
     private String profileImage;
     private String locale;
+    private String bio;
     private Boolean darkMode;
     private RoleType role;
     private Boolean isCreator;

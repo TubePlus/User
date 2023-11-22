@@ -64,6 +64,7 @@ public class UserController {
                 .username(logInDto.getUsername())
                 .profileImage(logInDto.getProfileImage())
                 .locale(logInDto.getLocale())
+                .bio(logInDto.getBio())
                 .darkMode(logInDto.getDarkMode())
                 .role(logInDto.getRole())
                 .isCreator(logInDto.getIsCreator())

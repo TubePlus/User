@@ -16,6 +16,7 @@ public class LogInDto {
     private String username;
     private String profileImage;
     private String locale;
+    private String bio;
     private Boolean darkMode;
     private RoleType role;
     private Boolean isCreator;
@@ -29,6 +30,7 @@ public class LogInDto {
                 .username(user.getUsername())
                 .profileImage(user.getProfileImage())
                 .locale(user.getLocale())
+                .bio(user.getBio())
                 .darkMode(user.getDarkMode())
                 .role(user.getRole())
                 .isCreator(user.getIsCreator())
