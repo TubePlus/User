@@ -11,9 +11,11 @@ public class CreatorDataAggregationDto {
     private String communityName;
     private String youtubeName;
 
-    public CreatorDataAggregationDto(String uuid, String category, String profileImage) {
+    public CreatorDataAggregationDto(String uuid, String category, String profileImage, String youtubeHandler, String userName) {
         this.userUuid = uuid;
         this.category = category;
         this.profileImage = profileImage;
+        this.youtubeHandler = youtubeHandler;
+        this.userName = userName;
     }
 }
