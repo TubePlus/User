@@ -52,7 +52,7 @@ public class UserEntity {
     private Boolean isCreator;
 
     @Column(name = "category")
-    private String category; // todo: 추후 변경? Enum category로
+    private String category;
 
     @Column(nullable = false, name = "email")
     private String email;
