@@ -17,6 +17,14 @@ spring:
   application:
     name: USER-SERVICE
 
+  kafka:
+    producer:
+      bootstrap-servers: plaintext://kafka1:9092,plaintext://kafka2:9092,plaintext://kafka3:9092
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    topic1:
+      name: "creatorDataAggregation"
+
   jpa:
     hibernate:
       ddl-auto: update

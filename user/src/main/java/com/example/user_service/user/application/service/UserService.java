@@ -1,5 +1,6 @@
 package com.example.user_service.user.application.service;
 
+import com.example.user_service.config.kafka.KafkaProducer;
 import com.example.user_service.user.application.ports.input.*;
 import com.example.user_service.user.application.ports.output.dto.*;
 import com.example.user_service.user.application.ports.output.UserPort;
@@ -21,6 +22,7 @@ public class UserService implements
 
     private final UserPort userPort;
     private final YoutubeService youtubeService;
+    private final KafkaProducer kafkaProducer;
 
     // 로그인
     @Override
@@ -111,6 +113,12 @@ public class UserService implements
                 registerCreatorQuery.getUuid(),
                 registerCreatorQuery.getCategoryName()
         ));
+        try {
+            kafkaProducer.producerCreateCreator(user.getUuid(),user.getCategory(),user.getProfileImage());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
         return UpdateCreatorDto.formUpdateCreatorDto(user);
     }
 
