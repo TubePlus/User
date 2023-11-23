@@ -25,10 +25,10 @@ public class KafkaProducer {
             e.printStackTrace();
         }
     }
-    public void producerCreateCreator(String uuid, String category, String profileImage, String youtubeHandler, String userName)
+    public void producerCreateCreator(String userUuid, String category, String profileImage, String youtubeHandler, String userName)
             throws JsonProcessingException {
         CreatorDataAggregationDto creatorDataAggregationDto
-                = new CreatorDataAggregationDto(uuid, category, profileImage, youtubeHandler, userName);
+                = new CreatorDataAggregationDto(userUuid, category, profileImage, youtubeHandler, userName);
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonInString = objectMapper.writeValueAsString(creatorDataAggregationDto);
         sendMessage(topic1,jsonInString);
