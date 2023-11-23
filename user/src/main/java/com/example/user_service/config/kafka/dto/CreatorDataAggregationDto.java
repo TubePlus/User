@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Data
 public class CreatorDataAggregationDto {
     private String userUuid;
     private String category;

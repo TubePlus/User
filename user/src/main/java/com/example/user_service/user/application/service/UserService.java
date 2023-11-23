@@ -175,7 +175,16 @@ public class UserService implements
                         updateUserInfoQuery.getLocale(),
                         updateUserInfoQuery.getBio()
                 ));
-
+        try {
+            kafkaProducer.producerCreateCreator(
+                    user.getUuid(),
+                    user.getCategory(),
+                    user.getProfileImage(),
+                    user.getYoutubeHandler(),
+                    user.getUsername());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         return UpdateUserInfoDto.formUpdateUserInfoDto(user);
     }
 
