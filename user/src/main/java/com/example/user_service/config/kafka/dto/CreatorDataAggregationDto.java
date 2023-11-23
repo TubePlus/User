@@ -1,5 +1,8 @@
 package com.example.user_service.config.kafka.dto;
 
+import lombok.Data;
+
+@Data
 public class CreatorDataAggregationDto {
     private String userUuid;
     private String category;
@@ -7,12 +10,4 @@ public class CreatorDataAggregationDto {
     private String youtubeHandler;
     private String userName;
 
-    public CreatorDataAggregationDto(String uuid, String category, String profileImage, String youtubeHandler, String userName) {
-        this.userUuid = uuid;
-        this.category = category;
-        this.profileImage = profileImage;
-        this.youtubeHandler = youtubeHandler;
-        this.userName = userName;
-
-    }
 }
