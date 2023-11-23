@@ -114,7 +114,12 @@ public class UserService implements
                 registerCreatorQuery.getCategoryName()
         ));
         try {
-            kafkaProducer.producerCreateCreator(user.getUuid(),user.getCategory(),user.getProfileImage(),user.getYoutubeHandler(),user.getUsername());
+            kafkaProducer.producerCreateCreator(
+                    user.getUuid(),
+                    user.getCategory(),
+                    user.getProfileImage(),
+                    user.getYoutubeHandler(),
+                    user.getUsername());
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

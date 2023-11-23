@@ -1,6 +1,6 @@
 package com.example.user_service.config.kafka;
 
-import com.example.user_service.user.adapter.infrastructure.mysql.entity.CreatorDataAggregationDto;
+import com.example.user_service.config.kafka.dto.CreatorDataAggregationDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
