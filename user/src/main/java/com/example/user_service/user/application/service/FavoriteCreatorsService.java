@@ -8,6 +8,7 @@ import com.example.user_service.user.application.ports.output.dto.ReadFavoritesD
 import com.example.user_service.user.domain.FavoriteCreator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

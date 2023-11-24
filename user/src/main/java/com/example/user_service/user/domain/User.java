@@ -1,6 +1,7 @@
 package com.example.user_service.user.domain;
 
 import com.example.user_service.user.adapter.infrastructure.mysql.entity.UserEntity;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
+@Table(name = "user")
 public class User {
 
     private Long id;
