@@ -75,6 +75,7 @@ public class FavoriteCreatorsAdaptor implements FavoriteCreatorsPort {
         return favoriteCreatorList;
     }
 
+    // 즐겨찾기한 크리에이터 삭제
     @Transactional
     @Override
     public FavoriteCreator deleteFavoriteCreator(FavoriteCreator favoriteCreator) {
