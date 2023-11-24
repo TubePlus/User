@@ -11,7 +11,6 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-@Table(name = "user")
 public class User {
 
     private Long id;

@@ -1,7 +1,6 @@
 package com.example.user_service.user.domain;
 
 import com.example.user_service.user.adapter.infrastructure.mysql.entity.FavoriteCreatorsEntity;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "favorite_creator")
 public class FavoriteCreator {
 
     // todo: 커뮤니티 정보도 나중에 야무지게 추가하기~

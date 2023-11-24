@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "favorite_creators")
+@Table(name = "favorite_creator")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
