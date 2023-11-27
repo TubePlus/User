@@ -330,7 +330,7 @@ public class UserController {
     //todo: 크리에이터 커뮤니티 정보도 넣어야함.
     @Tag(name = "즐겨찾기 기능") @Operation(summary = "즐겨찾는 크리에이터 조회")
     // 캐싱 적용 테스트
-    @Cacheable(cacheNames = "favoriteCreators", key = "#requestReadFavorites.uuid")
+//    @Cacheable(cacheNames = "favoriteCreators", key = "#requestReadFavorites.uuid")
     @PostMapping("favorites/view")
     public ApiResponse<Object> bookmarkCreator(@Valid @RequestBody RequestReadFavorites requestReadFavorites) {
 
