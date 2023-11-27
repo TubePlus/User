@@ -11,12 +11,14 @@ import com.example.user_service.user.domain.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService implements
         LogInUseCase, UsernameUseCase, UserInfoUseCase, CreatorUseCase {
 
@@ -25,6 +27,7 @@ public class UserService implements
     private final KafkaProducer kafkaProducer;
 
     // 로그인
+    @Transactional(readOnly = false)
     @Override
     public LogInDto logInUser(LogInQuery logInQuery) throws JsonProcessingException {
 
@@ -37,6 +40,7 @@ public class UserService implements
     }
 
     // 회원가입
+    @Transactional(readOnly = false)
     @Override
     public SignUpDto signUpUser(SignUpQuery signUpQuery) throws JsonProcessingException {
 
@@ -65,6 +69,7 @@ public class UserService implements
     }
 
     // 휴면 유저 복귀
+    @Transactional(readOnly = false)
     @Override
     public ComeBackDto comeBackUser(ComeBackQuery comeBackQuery) throws JsonProcessingException {
 
@@ -90,6 +95,7 @@ public class UserService implements
     }
 
     // username 변경(기존의 username을 새로운 username으로 변경 시 사용)
+    @Transactional(readOnly = false)
     @Override
     public ChangeUsernameDto changeUsername(ChangeUsernameQuery changeUsernameQuery) {
 
@@ -104,6 +110,7 @@ public class UserService implements
     }
 
     // 크리에이터 등록
+    @Transactional(readOnly = false)
     @Override
     public UpdateCreatorDto registerCreator(UpdateCreatorQuery registerCreatorQuery) {
 
@@ -128,6 +135,7 @@ public class UserService implements
     }
 
     // 크리에이터 카테고리 수정(크리에이터 정보 수정)
+    @Transactional(readOnly = false)
     @Override
     public UpdateCreatorDto changeCreatorCategory(UpdateCreatorQuery changeCreatorCategoryQuery) {
 
@@ -139,6 +147,7 @@ public class UserService implements
     }
 
     // 크리에이터 등록 해제
+    @Transactional(readOnly = false)
     @Override
     public DeleteCreatorDto deleteCreator(DeleteCreatorQuery deleteCreatorQuery) {
 
@@ -164,6 +173,7 @@ public class UserService implements
     }
 
     // 유저 정보 수정하기
+    @Transactional(readOnly = false)
     @Override
     public UpdateUserInfoDto updateUserInfo(UpdateUserInfoQuery updateUserInfoQuery) {
 
@@ -189,6 +199,7 @@ public class UserService implements
     }
 
     // 회원 탈퇴
+    @Transactional(readOnly = false)
     @Override
     public SoftDeleteUserDto softDeleteUser(SoftDeleteUserQuery softDeleteUserQuery) {
 
@@ -199,6 +210,7 @@ public class UserService implements
     }
 
     // 다크모드 변경
+    @Transactional(readOnly = false)
     @Override
     public ToggleDarkModeDto toggleDarkMode(ToggleDarkModeQuery toggleDarkModeQuery) {
 

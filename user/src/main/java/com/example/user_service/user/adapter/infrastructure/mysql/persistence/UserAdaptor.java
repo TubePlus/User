@@ -9,13 +9,10 @@ import com.example.user_service.user.application.ports.output.UserPort;
 import com.example.user_service.user.application.ports.output.dto.AutoSearchCreatorsDto;
 import com.example.user_service.user.domain.StatusType;
 import com.example.user_service.user.domain.User;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -29,7 +26,6 @@ public class UserAdaptor implements UserPort {
     private final JPAQueryFactory queryFactory;
 
     // 로그인
-    @Transactional(readOnly = false)
     @Override
     public User logInUser(User user) { // todo: 어댑터는 repository와 연결하는 역할만 하도록 변경
 
@@ -65,7 +61,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 회원가입
-    @Transactional(readOnly = false)
     @Override
     public User signUpUser(User user) {
 
@@ -74,7 +69,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 휴면회원복귀
-    @Transactional(readOnly = false)
     @Override
     public User comeBackUser(User user) {
 
@@ -92,7 +86,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 유저네임 변경
-    @Transactional(readOnly = false)
     @Override
     public User changeUsername(User user) {
 
@@ -107,7 +100,6 @@ public class UserAdaptor implements UserPort {
 
     // 크리에이터 여부 확인(서버간 API 통신)
     // todo: 서버간 통신 API 사용하지 않을 경우에 삭제해야합니다.
-    @Transactional(readOnly = true)
     @Override
     public Boolean checkCreator(User user) {
 
@@ -118,7 +110,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 크리에이터 등록
-    @Transactional(readOnly = false)
     @Override
     public User registerCreator(User user) {
 
@@ -132,7 +123,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 크리에이터 카테고리 변경(크리에이터 정보 수정)
-    @Transactional(readOnly = false)
     @Override
     public User changeCreatorCategory(User user) {
 
@@ -152,7 +142,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 크리에이터 등록 해제
-    @Transactional(readOnly = false)
     @Override
     public User deleteCreator(User user) {
 
@@ -172,7 +161,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 회원탈퇴
-    @Transactional(readOnly = false)
     @Override
     public User softDeleteUser(User user) {
 
@@ -186,7 +174,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 다크모드 변경
-    @Transactional(readOnly = false)
     @Override
     public User toggleDarkMode(User user) {
 
@@ -200,7 +187,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 크리에이터 자동완성 조회
-    @Transactional(readOnly = true)
     @Override
     public List<AutoSearchCreatorsDto> autoSearchCreators(User user) {
 
@@ -225,7 +211,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 유저 회원정보 조회
-    @Transactional(readOnly = true)
     @Override
     public User getUserInfo(User user) {
 
@@ -237,7 +222,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 유저 정보 수정
-    @Transactional(readOnly = false)
     @Override
     public User updateUserInfo(User user) {
 
@@ -253,7 +237,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 유저네임 중복 체크
-    @Transactional(readOnly = true)
     @Override
     public void checkDuplicateUsername(String username) {
 
@@ -264,7 +247,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 유저 핸들러 변경 여부에 따른 업데이트
-    @Transactional(readOnly = false)
     public void updateHandler(Optional<UserEntity> userEntity, User user) {
 
         // 유저가 존재하면 유튜브 핸들러 변경 여부 확인, 변경되었을시 유튜브 핸들러 업데이트
@@ -275,7 +257,6 @@ public class UserAdaptor implements UserPort {
     }
 
     // 유저 프로필/핸들러 변경 여부에 따른 업데이트
-    @Transactional(readOnly = false)
     public void updateProfileImageAndHandler(Optional<UserEntity> userEntity, User user) {
 
         // 유저가 존재하면 유튜브 프로필 변경 여부 확인, 변경되었을시 프로필 업데이트

@@ -13,7 +13,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class FavoriteCreatorsAdaptor implements FavoriteCreatorsPort {
 
     private final FavoriteCreatorsRepository favoriteCreatorsRepository;
@@ -29,7 +27,6 @@ public class FavoriteCreatorsAdaptor implements FavoriteCreatorsPort {
     private final EntityManager em;
 
     // 크리에이터 즐겨찾기 추가
-    @Transactional
     @Override
     public FavoriteCreator addFavoriteCreator(FavoriteCreator favoriteCreator) {
 
@@ -76,7 +73,6 @@ public class FavoriteCreatorsAdaptor implements FavoriteCreatorsPort {
     }
 
     // 즐겨찾기한 크리에이터 삭제
-    @Transactional
     @Override
     public FavoriteCreator deleteFavoriteCreator(FavoriteCreator favoriteCreator) {
 

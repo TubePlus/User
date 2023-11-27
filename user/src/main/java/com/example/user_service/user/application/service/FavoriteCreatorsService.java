@@ -14,11 +14,13 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class FavoriteCreatorsService implements FavoritesUseCase {
 
     private final FavoriteCreatorsPort favoriteCreatorsPort;
 
     // 크리에이터 즐겨찾기 추가
+    @Transactional(readOnly = false)
     @Override
     public AddFavoriteDto addFavoriteCreator(AddFavoriteCreatorQuery addFavoriteCreatorQuery) {
 
@@ -47,6 +49,7 @@ public class FavoriteCreatorsService implements FavoritesUseCase {
     }
 
     // 크리에이터 즐겨찾기 삭제
+    @Transactional(readOnly = false)
     @Override
     public DeleteFavoriteDto deleteFavoriteCreator(DeleteFavoriteCreatorQuery deleteFavoriteCreatorQuery) {
 
