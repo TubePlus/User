@@ -87,7 +87,12 @@ public class UserController {
     @Tag(name = "로그인/회원가입") @Operation(summary = "회원가입")
     @PostMapping("signup")
     public ApiResponse<Object> signup(
-            @Valid @RequestBody RequestSignUpUser requestSignUpUser) throws JsonProcessingException {
+            @RequestBody RequestSignUpUser requestSignUpUser) throws JsonProcessingException {
+
+        System.out.println("email: "+requestSignUpUser.getEmail());
+        System.out.println("username: "+requestSignUpUser.getUsername());
+        System.out.println("token: "+requestSignUpUser.getToken());
+        System.out.println("locale: "+requestSignUpUser.getLocale());
 
         SignUpDto signUpDto =
                 logInUseCase.signUpUser(LogInUseCase.SignUpQuery.toQuery(requestSignUpUser));
